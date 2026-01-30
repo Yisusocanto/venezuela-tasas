@@ -1,3 +1,6 @@
+from datetime import datetime, timezone, timedelta
+from typing import Literal
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc, func
 from app.schemas.rate_schema import RateSchemaBase, RateSchemaDB
@@ -19,23 +22,42 @@ class RateRepository:
     async def get_all_rates(self):
         # Get the latest record for each currency name
         subquery = (
-            select(
-                Rate.name,
-                func.max(Rate.date).label('max_date')
-            )
+            select(Rate.name, func.max(Rate.date).label("max_date"))
             .group_by(Rate.name)
             .subquery()
         )
-        
+
         result = await self.db.execute(
             select(Rate)
             .join(
                 subquery,
-                (Rate.name == subquery.c.name) & 
-                (Rate.date == subquery.c.max_date)
+                (Rate.name == subquery.c.name) & (Rate.date == subquery.c.max_date),
             )
             .order_by(Rate.name)
         )
         currencies = result.scalars().all()
-        
-        return [RateSchemaDB.model_validate(currency).model_dump(by_alias=True) for currency in currencies]
+
+        return [
+            RateSchemaDB.model_validate(currency).model_dump()
+            for currency in currencies
+        ]
+
+    async def get_currency_rate(self, currency_name: str):
+        result = await self.db.execute(
+            select(Rate)
+            .where(Rate.name == currency_name)
+            .order_by(desc(Rate.date))
+            .limit(1)
+        )
+        return RateSchemaDB.model_validate(result.scalar_one_or_none()).model_dump()
+
+    async def get_rate_history(self, currency_name: Literal["dolar", "euro"]):
+        last_month = datetime.now(timezone.utc) - timedelta(days=30)
+        result = await self.db.execute(
+            select(Rate)
+            .where(Rate.name == currency_name, Rate.date >= last_month)
+            .order_by(desc(Rate.date))
+            .limit(30)
+        )
+        rates = result.scalars().all()
+        return [RateSchemaDB.model_validate(rate).model_dump() for rate in rates]

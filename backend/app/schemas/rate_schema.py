@@ -3,10 +3,7 @@ from datetime import datetime
 
 
 class RateSchemaBase(BaseModel):
-    model_config = ConfigDict(
-        populate_by_name=True,
-        from_attributes=True
-    )
+    model_config = ConfigDict(populate_by_name=True, from_attributes=True)
 
     name: str
     rate: float
@@ -14,4 +11,4 @@ class RateSchemaBase(BaseModel):
 
 class RateSchemaDB(RateSchemaBase):
     id: int
-    date: datetime = Field(alias="createdAt")
+    date: datetime

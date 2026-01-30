@@ -15,6 +15,8 @@ async def lifespan(app: FastAPI):
 
     print("Database initialized.")
 
+    await rate_scraping()
+
     loop = asyncio.get_running_loop()
     scheduler = AsyncIOScheduler(loop=loop)
     scheduler.add_job(rate_scraping, "cron", hour=14, minute=56)
