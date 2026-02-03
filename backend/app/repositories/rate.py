@@ -1,10 +1,10 @@
 from datetime import datetime, timezone, timedelta
 from typing import Literal
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc, func
 from app.schemas.rate_schema import RateSchemaBase, RateSchemaDB
 from app.models.rate import Rate
+from app.schemas import AvailableCurrencies
 
 
 class RateRepository:
@@ -42,16 +42,43 @@ class RateRepository:
             for currency in currencies
         ]
 
-    async def get_currency_rate(self, currency_name: str):
+    async def get_currency_rate(self, currency_name: str) -> RateSchemaDB | None:
         result = await self.db.execute(
             select(Rate)
             .where(Rate.name == currency_name)
             .order_by(desc(Rate.date))
             .limit(1)
         )
-        return RateSchemaDB.model_validate(result.scalar_one_or_none()).model_dump()
+        rate = result.scalar_one_or_none()
+        return RateSchemaDB.model_validate(rate).model_dump() if rate else None
 
-    async def get_rate_history(self, currency_name: Literal["dolar", "euro"]):
+    async def get_currency_rate_on_a_certain_date(
+        self, currency_name: AvailableCurrencies, date: datetime
+    ) -> RateSchemaDB | None:
+        start_date = datetime(
+            date.year,
+            date.month,
+            date.day,
+            tzinfo=timezone.utc,
+        )
+        end_date = start_date + timedelta(days=1)
+
+        result = await self.db.execute(
+            select(Rate)
+            .where(
+                Rate.name == currency_name,
+                Rate.date >= start_date,
+                Rate.date <= end_date,
+            )
+            .order_by(desc(Rate.date))
+            .limit(1)
+        )
+        rate = result.scalar_one_or_none()
+        return RateSchemaDB.model_validate(rate).model_dump() if rate else None
+
+    async def get_rate_history(
+        self, currency_name: AvailableCurrencies
+    ) -> list[RateSchemaDB] | list:
         last_month = datetime.now(timezone.utc) - timedelta(days=30)
         result = await self.db.execute(
             select(Rate)
@@ -60,4 +87,8 @@ class RateRepository:
             .limit(30)
         )
         rates = result.scalars().all()
-        return [RateSchemaDB.model_validate(rate).model_dump() for rate in rates]
+        return (
+            [RateSchemaDB.model_validate(rate).model_dump() for rate in rates]
+            if rates
+            else []
+        )

@@ -1,4 +1,5 @@
-from pydantic import BaseModel, ConfigDict, Field
+from enum import Enum
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
@@ -12,3 +13,21 @@ class RateSchemaBase(BaseModel):
 class RateSchemaDB(RateSchemaBase):
     id: int
     date: datetime
+
+
+class AvailableCurrencies(str, Enum):
+    dolar = "dolar"
+    euro = "euro"
+
+
+class RateListResponse(BaseModel):
+    rates: list[RateSchemaDB]
+
+
+class RateResponse(BaseModel):
+    rate: RateSchemaDB
+
+
+class RateHistoryResponse(BaseModel):
+    history: list[RateSchemaDB]
+    results: int
