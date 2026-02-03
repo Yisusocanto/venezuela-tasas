@@ -1,5 +1,4 @@
 from datetime import datetime, timezone, timedelta
-from typing import Literal
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc, func
 from app.schemas.rate_schema import RateSchemaBase, RateSchemaDB
@@ -92,3 +91,30 @@ class RateRepository:
             if rates
             else []
         )
+
+    async def get_rate_history_for_date_range(
+        self,
+        currency_name: AvailableCurrencies,
+        start_date: datetime,
+        end_date: datetime,
+    ) -> list[RateSchemaDB] | list:
+        start_datetime = datetime(
+            start_date.year, start_date.month, start_date.day, tzinfo=timezone.utc
+        )
+        end_datetime = datetime(
+            end_date.year, end_date.month, end_date.day, tzinfo=timezone.utc
+        ) + timedelta(days=1)
+
+        result = await self.db.execute(
+            select(Rate)
+            .where(
+                Rate.name == currency_name,
+                Rate.date >= start_datetime,
+                Rate.date <= end_datetime,
+            )
+            .order_by(desc(Rate.date))
+        )
+
+        rates = result.scalars().all()
+
+        return [RateSchemaDB.model_validate(rate) for rate in rates] if rates else []

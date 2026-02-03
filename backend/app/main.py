@@ -1,9 +1,9 @@
 import asyncio
 from contextlib import asynccontextmanager
+from pydantic import BaseModel
 from app.lib.rate_cron_job import rate_scraping
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.core.config import settings
-from app.db.database import engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.v1_routes import v1_routes
@@ -19,7 +19,7 @@ async def lifespan(app: FastAPI):
 
     loop = asyncio.get_running_loop()
     scheduler = AsyncIOScheduler(loop=loop)
-    scheduler.add_job(rate_scraping, "cron", hour=14, minute=56)
+    scheduler.add_job(rate_scraping, "cron", hour=12, minute=5)
     scheduler.start()
 
     print("cron job initialized.")
@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
 def create_app():
     app = FastAPI(
         title="Dolar Venezuela",
-        description="Ap to consult the dolar in Venezuela",
+        description="API to consult the dolar in Venezuela",
         lifespan=lifespan,
     )
 
@@ -54,6 +54,15 @@ def create_app():
 app = create_app()
 
 
-@app.get("/health", tags=["Health"], summary="Check if the api is alive.")
+class HealthResponse(BaseModel):
+    health: bool
+
+
+@app.get(
+    "/health",
+    tags=["Health"],
+    summary="Check if the api is alive.",
+    response_model=HealthResponse,
+)
 def health():
     return {"health": True}
