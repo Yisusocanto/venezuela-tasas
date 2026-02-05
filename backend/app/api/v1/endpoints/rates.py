@@ -10,6 +10,7 @@ from app.schemas import (
     RateHistoryResponse,
     RateListResponse,
     AvailableCurrencies,
+    AllRatesResponse,
 )
 
 rates_router = APIRouter()
@@ -19,13 +20,14 @@ rates_router = APIRouter()
     "/",
     tags=["Rates"],
     summary="Get the rates of the currencies",
-    response_model=RateListResponse,
+    response_model=AllRatesResponse,
 )
 async def rates(db: AsyncSession = Depends(get_db)):
     rate_repo = RateRepository(db)
 
     rate_list = await rate_repo.get_all_rates()
-    return {"rates": rate_list}
+    rates_by_name = {rate["name"]: rate for rate in rate_list}
+    return rates_by_name
 
 
 @rates_router.get(

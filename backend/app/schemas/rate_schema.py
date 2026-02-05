@@ -20,6 +20,11 @@ class AvailableCurrencies(str, Enum):
     euro = "euro"
 
 
+class AllRatesResponse(BaseModel):
+    dolar: RateSchemaDB
+    euro: RateSchemaDB
+
+
 class RateListResponse(BaseModel):
     rates: list[RateSchemaDB]
 

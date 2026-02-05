@@ -5,6 +5,7 @@ from .rate_schema import (
     RateHistoryResponse,
     RateSchemaBase,
     AvailableCurrencies,
+    AllRatesResponse,
 )
 from .update_schema import UpdateSchema
 
@@ -16,4 +17,5 @@ __all__ = [
     "RateSchemaBase",
     "AvailableCurrencies",
     "UpdateSchema",
+    "AllRatesResponse",
 ]
