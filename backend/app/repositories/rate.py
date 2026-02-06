@@ -11,7 +11,9 @@ class RateRepository:
         self.db = db
 
     async def create_rate_record(self, rate: RateSchemaBase):
-        new_rate_record = Rate(name=rate.name, rate=rate.rate)
+        new_rate_record = Rate(
+            name=rate.name, rate=rate.rate, currency_code=rate.currency_code
+        )
         self.db.add(new_rate_record)
         await self.db.flush()
         await self.db.refresh(new_rate_record)

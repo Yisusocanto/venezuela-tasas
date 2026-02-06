@@ -12,9 +12,10 @@ class Rate(Base):
     )
     name: Mapped[str] = mapped_column(nullable=False, index=True)
     rate: Mapped[float] = mapped_column(nullable=False)
+    currency_code: Mapped[str] = mapped_column(nullable=False)
     date: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
-        server_default=func.now()
+        server_default=func.now(),
     )

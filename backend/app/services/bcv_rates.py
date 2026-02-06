@@ -23,6 +23,8 @@ class BcvRates:
                 rates: list[RateSchemaBase] = [
                     RateSchemaBase(**cls.get_euro(soup)),
                     RateSchemaBase(**cls.get_dolar(soup)),
+                    RateSchemaBase(**cls.get_lira(soup)),
+                    RateSchemaBase(**cls.get_rublo(soup)),
                 ]
                 return rates
             return None
@@ -33,14 +35,51 @@ class BcvRates:
 
     @classmethod
     def get_dolar(cls, soup) -> dict[str, str | float]:
-        dolar_rate = soup.find(id="dolar").find(class_="centrado").find("strong").text
+        dolar_div = soup.find(id="dolar")
+        dolar_rate = dolar_div.find(class_="centrado").find("strong").text
+        currency_code = (
+            dolar_div.find(class_="col-sm-6 col-xs-6").find("span").text.strip()
+        )
         dolar_rate = dolar_rate.replace(",", ".")
         dolar_float = round(float(dolar_rate.strip()), 2)
-        return {"name": "dolar", "rate": dolar_float}
+        return {"name": "dolar", "rate": dolar_float, "currency_code": currency_code}
 
     @classmethod
     def get_euro(cls, soup) -> dict[str, str | float]:
-        euro_rate = soup.find(id="euro").find(class_="centrado").find("strong").text
+        euro_div = soup.find(id="euro")
+        euro_rate = euro_div.find(class_="centrado").find("strong").text
+        currency_code = (
+            euro_div.find(class_="col-sm-6 col-xs-6").find("span").text.strip()
+        )
         euro_rate = euro_rate.replace(",", ".")
         euro_float = round(float(euro_rate.strip()), 2)
-        return {"name": "euro", "rate": euro_float}
+        return {"name": "euro", "rate": euro_float, "currency_code": currency_code}
+
+    @classmethod
+    def get_lira(cls, soup) -> dict[str, str | float]:
+        lira_div = soup.find(id="lira")
+        print("lira div")
+        lira_rate = lira_div.find(class_="centrado").find("strong").text
+        print("lira rate", lira_rate)
+        currency_code = (
+            lira_div.find(class_="col-sm-6 col-xs-6").find("span").text.strip()
+        )
+        print("lira code")
+        lira_rate = lira_rate.replace(",", ".")
+        lira_float = round(float(lira_rate.strip()), 2)
+        print("lira final")
+        return {"name": "lira", "rate": lira_float, "currency_code": currency_code}
+
+    @classmethod
+    def get_rublo(cls, soup) -> dict[str, str | float]:
+        rublo_div = soup.find(id="rublo")
+        rublo_rate = rublo_div.find(class_="centrado").find("strong").text
+        print("rublo rate")
+        currency_code = (
+            rublo_div.find(class_="col-sm-6 col-xs-6").find("span").text.strip()
+        )
+        print("rublo code")
+        rublo_rate = rublo_rate.replace(",", ".")
+        rublo_float = round(float(rublo_rate.strip()), 2)
+        print("rublo final")
+        return {"name": "rublo", "rate": rublo_float, "currency_code": currency_code}

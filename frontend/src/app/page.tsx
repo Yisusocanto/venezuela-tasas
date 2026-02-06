@@ -1,9 +1,10 @@
 import Calculator from "@/components/Calculator";
 import KPICard from "@/components/KPICard";
 import { getAllRates } from "@/services/rateService";
+import { currencyIcons } from "@/config/currencies";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
-import { Calendar, DollarSign, EuroIcon } from "lucide-react";
+import { Calendar, DollarSign } from "lucide-react";
 
 dayjs.locale("es");
 
@@ -40,18 +41,20 @@ export default async function Home() {
       </div>
       <Calculator rates={rates} />
       <div className="flex flex-col md:flex-row gap-4 mt-8">
-        <KPICard
-          currencyCode="USD"
-          currencyName={rates.dolar?.name || "Dólar"}
-          rate={rates.dolar?.rate || 0}
-          logo={<DollarSign />}
-        />
-        <KPICard
-          currencyCode="EUR"
-          currencyName={rates.euro?.name || "Euro"}
-          rate={rates.euro?.rate || 0}
-          logo={<EuroIcon />}
-        />
+        {Object.entries(rates).map(([key, rate]) => {
+          // Try to find icon by currencyCode (try both as-is and uppercase)
+          const Icon = currencyIcons[rate.currencyCode].icon;
+
+          return (
+            <KPICard
+              key={rate.currencyCode}
+              currencyCode={rate.currencyCode}
+              currencyName={rate.name}
+              rate={rate.rate}
+              logo={<Icon />}
+            />
+          );
+        })}
       </div>
     </div>
   );
