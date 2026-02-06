@@ -42,7 +42,6 @@ export default async function Home() {
       <Calculator rates={rates} />
       <div className="flex flex-col md:flex-row gap-4 mt-8">
         {Object.entries(rates).map(([key, rate]) => {
-          // Try to find icon by currencyCode (try both as-is and uppercase)
           const Icon = currencyIcons[rate.currencyCode].icon;
 
           return (

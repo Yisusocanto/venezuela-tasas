@@ -9,4 +9,6 @@ export interface Rate {
 export interface AllRates {
   dolar: Rate;
   euro: Rate;
+  lira: Rate;
+  rublo: Rate;
 }

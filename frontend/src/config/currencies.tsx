@@ -10,8 +10,6 @@ export interface CurrencyConfig {
   icon: LucideIcon;
 }
 
-// Mapeo de códigos de divisa a iconos
-// Soporta múltiples variaciones del código para mayor flexibilidad
 export const currencyIcons: Record<string, CurrencyConfig> = {
   USD: {
     icon: DollarSign,
@@ -25,11 +23,4 @@ export const currencyIcons: Record<string, CurrencyConfig> = {
   RUB: {
     icon: RussianRuble,
   },
-  // Agrega más divisas aquí en el futuro
-  // GBP: {
-  //   icon: PoundSterling,
-  // },
-  // JPY: {
-  //   icon: YenIcon,
-  // },
 };

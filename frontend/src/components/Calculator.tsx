@@ -14,7 +14,7 @@ import {
 } from "@heroui/react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AllRates } from "@/types/Rate";
+import type { AllRates, Rate } from "@/types/Rate";
 import { useEffect, useState } from "react";
 import { RefreshCcwDot, Repeat, TrendingUp } from "lucide-react";
 
@@ -28,25 +28,24 @@ interface CalculatorProps {
 }
 
 function Calculator({ rates }: CalculatorProps) {
-  const [selectedCurrency, setSelectedCurrency] = useState<Key>("USD");
+  const [selectedCurrency, setSelectedCurrency] =
+    useState<keyof AllRates>("dolar");
 
-  const currentRate =
-    selectedCurrency === "USD" ? rates.dolar.rate : rates.euro.rate;
+  const currentRate = rates[selectedCurrency].rate;
 
   const { setValue, reset, watch } = useForm({
     resolver: zodResolver(Schema),
     defaultValues: {
-      bolivar: 1,
-      currency: rates.dolar.rate,
+      bolivar: rates.dolar.rate,
+      currency: 1,
     },
   });
 
-  // Ensure form is reset when rates arrive or change
   useEffect(() => {
     if (rates) {
       reset({
-        bolivar: 1,
-        currency: rates.dolar.rate,
+        bolivar: rates.dolar.rate,
+        currency: 1,
       });
     }
   }, [rates, reset]);
@@ -56,21 +55,23 @@ function Calculator({ rates }: CalculatorProps) {
 
   const resetForm = () => {
     reset({
-      bolivar: 1,
-      currency: rates.dolar.rate,
+      bolivar: rates.dolar.rate,
+      currency: 1,
     });
-    setSelectedCurrency("USD");
+    setSelectedCurrency("dolar");
   };
 
   const handleSelectCurrencyChange = (value: Key) => {
-    setSelectedCurrency(value);
-    const newRate = value === "USD" ? rates.dolar.rate : rates.euro.rate;
+    const currencyKey = value as keyof AllRates;
+    setSelectedCurrency(currencyKey);
+    const newRate = rates[currencyKey].rate;
     // Update currency amount based on current bolivars
-    setValue("currency", Number((bolivarValue / newRate).toFixed(2)));
+    setValue("bolivar", newRate);
+    setValue("currency", 1);
   };
 
   const onBolivarInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value === "" ? 0 : Number(e.target.value);
+    const value = e.target.value === "" ? 1 : Number(e.target.value);
     setValue("bolivar", value);
     setValue("currency", Number((value / currentRate).toFixed(2)));
   };
@@ -91,11 +92,11 @@ function Calculator({ rates }: CalculatorProps) {
       </Card.Title>
       <div className="p-4">
         <Form className="flex flex-wrap gap-2 items-center">
-          <div className="flex-1 min-w-[200px] bg-accent-soft p-4 rounded-2xl">
+          <div className="flex-1 min-w-[200px] bg-overlay p-4 rounded-2xl">
             <TextField>
               <Label>Monto en Bolívares (VES)</Label>
               <Input
-                className="bg-overlay"
+                className="border border-accent-soft"
                 type="number"
                 step="any"
                 value={typeof bolivarValue === "number" ? bolivarValue : ""}
@@ -117,7 +118,7 @@ function Calculator({ rates }: CalculatorProps) {
             </Button>
           </div>
 
-          <div className="flex-2 flex gap-4  bg-accent-soft p-4 rounded-2xl items-center">
+          <div className="flex-2 flex gap-4  bg-overlay p-4 rounded-2xl items-center">
             <div className="flex-1 w-fit ">
               <Select
                 selectedKey={selectedCurrency}
@@ -126,18 +127,21 @@ function Calculator({ rates }: CalculatorProps) {
                 }
               >
                 <Label>Seleccionar Divisa</Label>
-                <Select.Trigger className="bg-overlay">
+                <Select.Trigger className={"bg-accent-soft"}>
                   <Select.Value />
                   <Select.Indicator />
                 </Select.Trigger>
-                <Select.Popover className="bg-overlay">
-                  <ListBox className="bg-overlay">
-                    <ListBox.Item id="USD" textValue="USD">
-                      USD
-                    </ListBox.Item>
-                    <ListBox.Item id="EUR" textValue="EUR">
-                      EUR
-                    </ListBox.Item>
+                <Select.Popover className={"border"}>
+                  <ListBox>
+                    {Object.entries(rates).map(([key, rate]) => (
+                      <ListBox.Item
+                        key={key}
+                        id={key}
+                        textValue={rate.currencyCode}
+                      >
+                        {rate.currencyCode} - ({rate.name})
+                      </ListBox.Item>
+                    ))}
                   </ListBox>
                 </Select.Popover>
               </Select>
@@ -147,7 +151,7 @@ function Calculator({ rates }: CalculatorProps) {
               <TextField>
                 <Label>Monto en {selectedCurrency}</Label>
                 <Input
-                  className="bg-overlay"
+                  className="border border-accent-soft"
                   type="number"
                   step="any"
                   value={typeof currencyValue === "number" ? currencyValue : ""}
