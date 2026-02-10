@@ -85,9 +85,9 @@ function Calculator({ rates }: CalculatorProps) {
   return (
     <Card className="w-full p-8 border" variant="secondary">
       <Card.Title className="text-3xl font-bold flex gap-2 items-center">
-        <div className="rounded-full bg-accent-soft p-2">
+        <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
           <RefreshCcwDot size={20} className="text-accent" />
-        </div>
+        </span>
         Calculadora de Divisas
       </Card.Title>
       <div className="p-4">
@@ -167,9 +167,9 @@ function Calculator({ rates }: CalculatorProps) {
             Tasa de cambio actual
           </h2>
           <div className="text-2xl font-bold flex items-center gap-2 mt-1">
-            <div className="rounded-full bg-accent-soft p-2">
+            <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
               <TrendingUp size={20} className="text-accent" />
-            </div>
+            </span>
             <span className="text-primary text-xl">1 {selectedCurrency}</span>
             <span className="text-muted-foreground text-lg">=</span>
             <span className="text-accent text-2xl">

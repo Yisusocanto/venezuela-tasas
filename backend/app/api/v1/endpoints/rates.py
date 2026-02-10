@@ -69,7 +69,7 @@ async def rate_history(
     "/{currency_name}/date/{date}",
     tags=["Rate History"],
     summary="Get the rate of a currency on a specific date",
-    response_model=RateResponse,
+    response_model=RateListResponse,
 )
 async def currency_rate_on_a_certain_date(
     currency_name: Annotated[AvailableCurrencies, Path(title="Currency name")],
@@ -100,7 +100,7 @@ async def currency_rate_on_a_certain_date(
             detail="There are no exchange rate results for the date shown.",
         )
 
-    return {"rate": rate}
+    return {"rates": [rate]}
 
 
 @rates_router.get(
