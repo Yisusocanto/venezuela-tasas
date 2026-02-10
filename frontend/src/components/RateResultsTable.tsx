@@ -66,9 +66,9 @@ function RateResultsTable({ rates, error }: RateResultsTableProps) {
   });
 
   return (
-    <Card variant="secondary" className="border p-0">
+    <Card className="border p-0">
       <table>
-        <thead className="table-auto bg-surface">
+        <thead className="table-auto bg-background">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="">
               {headerGroup.headers.map((header) => (

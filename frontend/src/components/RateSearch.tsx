@@ -57,7 +57,6 @@ function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
   useEffect(() => {
     if (shouldFetch && !isLoading) {
       if (isError && error) {
-        // If the error is 404, it means no results found, so we clean the rates and error
         if (
           error.message.includes("404") ||
           error.message.includes("Not Found")
@@ -118,7 +117,7 @@ function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
               }
             >
               <Label>Divisa</Label>
-              <Select.Trigger className={"bg-surface-secondary"}>
+              <Select.Trigger className={"bg-background"}>
                 <Select.Value />
                 <Select.Indicator />
               </Select.Trigger>
@@ -160,7 +159,7 @@ function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
             >
               <Label>Fecha</Label>
               <DateInputGroup>
-                <DateInputGroup.Input className={"bg-surface-secondary"}>
+                <DateInputGroup.Input className={"bg-background"}>
                   {(segment) => <DateInputGroup.Segment segment={segment} />}
                 </DateInputGroup.Input>
               </DateInputGroup>

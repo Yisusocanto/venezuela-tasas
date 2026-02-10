@@ -83,7 +83,7 @@ function Calculator({ rates }: CalculatorProps) {
   };
 
   return (
-    <Card className="w-full p-8 border" variant="secondary">
+    <Card className="w-full p-8 border">
       <Card.Title className="text-3xl font-bold flex gap-2 items-center">
         <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
           <RefreshCcwDot size={20} className="text-accent" />
@@ -92,11 +92,11 @@ function Calculator({ rates }: CalculatorProps) {
       </Card.Title>
       <div className="p-4">
         <Form className="flex flex-wrap gap-2 items-center">
-          <div className="flex-1 min-w-[200px] bg-overlay p-4 rounded-2xl">
+          <div className="flex-1 min-w-[200px] bg-background p-4 rounded-2xl">
             <TextField>
               <Label>Monto en Bolívares (VES)</Label>
               <Input
-                className="border border-accent-soft"
+                className="border border-accent-soft bg-background"
                 type="number"
                 step="any"
                 value={typeof bolivarValue === "number" ? bolivarValue : ""}
@@ -118,7 +118,7 @@ function Calculator({ rates }: CalculatorProps) {
             </Button>
           </div>
 
-          <div className="flex-2 flex gap-4  bg-overlay p-4 rounded-2xl items-center">
+          <div className="flex-2 flex gap-4  bg-background p-4 rounded-2xl items-center">
             <div className="flex-1 w-fit ">
               <Select
                 selectedKey={selectedCurrency}
@@ -127,7 +127,7 @@ function Calculator({ rates }: CalculatorProps) {
                 }
               >
                 <Label>Seleccionar Divisa</Label>
-                <Select.Trigger className={"bg-accent-soft"}>
+                <Select.Trigger>
                   <Select.Value />
                   <Select.Indicator />
                 </Select.Trigger>
@@ -151,7 +151,7 @@ function Calculator({ rates }: CalculatorProps) {
               <TextField>
                 <Label>Monto en {selectedCurrency}</Label>
                 <Input
-                  className="border border-accent-soft"
+                  className="border border-accent-soft bg-background"
                   type="number"
                   step="any"
                   value={typeof currencyValue === "number" ? currencyValue : ""}
@@ -162,7 +162,7 @@ function Calculator({ rates }: CalculatorProps) {
             </div>
           </div>
         </Form>
-        <div className="mt-6 p-4 bg-overlay/50 rounded-lg">
+        <div className="mt-6 p-4 bg-background/50 rounded-lg">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
             Tasa de cambio actual
           </h2>
