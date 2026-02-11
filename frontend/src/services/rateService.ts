@@ -17,3 +17,20 @@ export const getRateOnCertainDate = async (
   );
   return data;
 };
+
+export const getRateForDateRange = async (
+  currencyName: string,
+  startDate: string,
+  endDate: string,
+): Promise<{ history: Rate[]; results: number }> => {
+  const data = await customFetch<{ history: Rate[]; results: number }>(
+    `/api/v1/rates/${currencyName}/rate_history_for_date_range`,
+    {
+      params: {
+        start_date: startDate,
+        end_date: endDate,
+      },
+    },
+  );
+  return data;
+};

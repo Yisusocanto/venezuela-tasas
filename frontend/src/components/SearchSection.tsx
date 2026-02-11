@@ -6,15 +6,22 @@ import RateSearch from "./RateSearch";
 import RateResultsTable from "./RateResultsTable";
 
 interface SearchSectionProps {
-  AllRates: AllRates;
+  allRates: AllRates;
+  withChart?: boolean;
+  forRange?: boolean;
 }
 
-function SearchSection({ AllRates }: SearchSectionProps) {
+function SearchSection({ allRates, forRange = false }: SearchSectionProps) {
   const [rates, setRates] = useState<Rate[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   return (
     <div className="flex flex-col gap-4">
-      <RateSearch AllRates={AllRates} setRates={setRates} setError={setError} />
+      <RateSearch
+        allRates={allRates}
+        setRates={setRates}
+        setError={setError}
+        forRange={forRange}
+      />
       {(rates || error) && <RateResultsTable rates={rates} error={error} />}
     </div>
   );

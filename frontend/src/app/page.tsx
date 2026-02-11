@@ -57,7 +57,7 @@ export default async function Home() {
           );
         })}
       </div>
-      <SearchSection AllRates={rates} />
+      <SearchSection allRates={rates} />
     </div>
   );
 }

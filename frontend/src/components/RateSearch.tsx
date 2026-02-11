@@ -12,47 +12,88 @@ import {
 } from "@heroui/react";
 import type { AllRates, Rate } from "@/types/Rate";
 import z from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRateForCertainDate } from "@/hooks/useRates";
+import { useRateForCertainDate, useRateForDateRange } from "@/hooks/useRates";
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 
-const Schema = z.object({
-  currencyName: z.string("La divisa es requerida."),
-  date: z.iso.date({
-    error: (issue) =>
-      issue.input === undefined ? "La fecha es requerida." : "Fecha invalida.",
-  }),
+const singleDateSchema = z.object({
+  currencyName: z.string().min(1, "La divisa es requerida."),
+  date: z.string().min(1, "La fecha es requerida."),
+  startDate: z.any().optional(),
+  endDate: z.any().optional(),
+});
+
+const rangeDateSchema = z.object({
+  currencyName: z.string().min(1, "La divisa es requerida."),
+  date: z.any().optional(),
+  startDate: z.string().min(1, "Fecha inicio requerida"),
+  endDate: z.string().min(1, "Fecha fin requerida"),
 });
 
 interface RateSearchProps {
-  AllRates: AllRates;
+  allRates: AllRates;
   setRates: (rates: Rate[] | null) => void;
   setError: (error: string | null) => void;
+  forRange?: boolean;
 }
 
-function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
+function RateSearch({
+  allRates,
+  setRates,
+  setError,
+  forRange = false,
+}: RateSearchProps) {
   const [shouldFetch, setShouldFetch] = useState(false);
 
   const {
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(Schema),
+    resolver: zodResolver(forRange ? rangeDateSchema : singleDateSchema),
     mode: "onChange",
+    defaultValues: {
+      currencyName: "",
+      date: "",
+      startDate: "",
+      endDate: "",
+    },
   });
 
   const currencySelectValue = watch("currencyName");
   const dateValue = watch("date");
+  const startDateValue = watch("startDate");
+  const endDateValue = watch("endDate");
 
-  const { data, isLoading, isError, error, status } = useRateForCertainDate(
+  // Single Date Query
+  const singleQuery = useRateForCertainDate(
     currencySelectValue,
     dateValue,
-    shouldFetch,
+    !forRange && shouldFetch,
   );
+
+  // Range Date Query
+  const rangeQuery = useRateForDateRange(
+    currencySelectValue,
+    startDateValue,
+    endDateValue,
+    forRange && shouldFetch,
+  );
+
+  // Helper to safely access data based on the query type
+  const getRatesFromData = (data: any) => {
+    if (!data) return null;
+    if ("history" in data) return data.history as Rate[];
+    if ("rates" in data) return data.rates as Rate[];
+    return null;
+  };
+
+  const activeQuery = forRange ? rangeQuery : singleQuery;
+  const { data, isLoading, isError, error, status } = activeQuery;
 
   useEffect(() => {
     if (shouldFetch && !isLoading) {
@@ -71,8 +112,10 @@ function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
         return;
       }
 
-      setRates(data?.rates ?? null);
-      setError(null);
+      const ratesData = getRatesFromData(data);
+      setRates(ratesData);
+
+      if (ratesData) setError(null);
       setShouldFetch(false);
     }
   }, [
@@ -84,6 +127,8 @@ function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
     error,
     setRates,
     setError,
+    // Add getRatesFromData to dependency array or move it inside useEffect/component scope
+    // (Defining it inside component scope before useEffect is fine, but better to keep it stable or simple)
   ]);
 
   const onSubmit = handleSubmit(() => {
@@ -96,7 +141,7 @@ function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
         <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
           <Search size={20} className="text-accent" />
         </span>
-        Busqueda avanzada
+        Busqueda avanzada {forRange ? "(Rango)" : "(Fecha)"}
       </Card.Title>
       <Separator />
       <Card.Content>
@@ -106,38 +151,45 @@ function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
         >
           {/* currency selector */}
           <div className="w-full flex flex-col gap-1">
-            <Select
-              fullWidth
-              value={currencySelectValue}
-              isInvalid={!!errors.currencyName}
-              onChange={(value) =>
-                setValue("currencyName", value as string, {
-                  shouldValidate: true,
-                })
-              }
-            >
-              <Label>Divisa</Label>
-              <Select.Trigger className={"bg-background"}>
-                <Select.Value />
-                <Select.Indicator />
-              </Select.Trigger>
-              <Select.Popover>
-                <ListBox>
-                  {Object.entries(AllRates).map(([key, rate]) => (
-                    <ListBox.Item
-                      key={rate.name}
-                      id={rate.name}
-                      textValue={rate.name}
-                    >
-                      {rate.currencyCode} - ({rate.name})
-                    </ListBox.Item>
-                  ))}
-                </ListBox>
-              </Select.Popover>
-            </Select>
+            <Controller
+              control={control}
+              name="currencyName"
+              render={({ field }) => (
+                <Select
+                  fullWidth
+                  isInvalid={!!errors.currencyName}
+                  selectedKey={field.value}
+                  onSelectionChange={(key) => {
+                    // Check if key is a valid value (not null) and cast to string
+                    if (key) {
+                      field.onChange(key.toString());
+                    }
+                  }}
+                >
+                  <Label>Divisa</Label>
+                  <Select.Trigger className={"bg-background"}>
+                    <Select.Value />
+                    <Select.Indicator />
+                  </Select.Trigger>
+                  <Select.Popover>
+                    <ListBox>
+                      {Object.entries(allRates).map(([key, rate]) => (
+                        <ListBox.Item
+                          key={rate.name}
+                          id={rate.name}
+                          textValue={rate.name}
+                        >
+                          {rate.currencyCode} - ({rate.name})
+                        </ListBox.Item>
+                      ))}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
+              )}
+            />
             {errors.currencyName ? (
               <span className="text-tiny text-danger">
-                {errors.currencyName.message}
+                {errors.currencyName.message as string}
               </span>
             ) : (
               <span className="text-tiny text-default-500">
@@ -146,34 +198,119 @@ function RateSearch({ AllRates, setRates, setError }: RateSearchProps) {
             )}
           </div>
 
-          {/* date input */}
-          <div className="w-full flex flex-col gap-1">
-            <DateField
-              fullWidth
-              isInvalid={!!errors.date}
-              onChange={(value) => {
-                setValue("date", value?.toString() ?? "", {
-                  shouldValidate: true,
-                });
-              }}
-            >
-              <Label>Fecha</Label>
-              <DateInputGroup>
-                <DateInputGroup.Input className={"bg-background"}>
-                  {(segment) => <DateInputGroup.Segment segment={segment} />}
-                </DateInputGroup.Input>
-              </DateInputGroup>
-            </DateField>
-            {errors.date ? (
-              <span className="text-tiny text-danger">
-                {errors.date.message}
-              </span>
-            ) : (
-              <span className="text-tiny text-default-500">
-                Selecciona la fecha
-              </span>
-            )}
-          </div>
+          {forRange ? (
+            // Range Mode
+            <>
+              {/* Start Date */}
+              <div className="w-full flex flex-col gap-1">
+                <Controller
+                  control={control}
+                  name="startDate"
+                  render={({ field }) => (
+                    <DateField
+                      fullWidth
+                      isInvalid={!!errors.startDate}
+                      // Uncontrolled: NO value prop
+                      onChange={(value) => {
+                        field.onChange(value?.toString() ?? "");
+                      }}
+                    >
+                      <Label>Desde</Label>
+                      <DateInputGroup>
+                        <DateInputGroup.Input className={"bg-background"}>
+                          {(segment) => (
+                            <DateInputGroup.Segment segment={segment} />
+                          )}
+                        </DateInputGroup.Input>
+                      </DateInputGroup>
+                    </DateField>
+                  )}
+                />
+                {errors.startDate ? (
+                  <span className="text-tiny text-danger">
+                    {errors.startDate.message as string}
+                  </span>
+                ) : (
+                  <span className="text-tiny text-default-500">
+                    Fecha de inicio
+                  </span>
+                )}
+              </div>
+
+              {/* End Date */}
+              <div className="w-full flex flex-col gap-1">
+                <Controller
+                  control={control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <DateField
+                      fullWidth
+                      isInvalid={!!errors.endDate}
+                      // Uncontrolled
+                      onChange={(value) => {
+                        field.onChange(value?.toString() ?? "");
+                      }}
+                    >
+                      <Label>Hasta</Label>
+                      <DateInputGroup>
+                        <DateInputGroup.Input className={"bg-background"}>
+                          {(segment) => (
+                            <DateInputGroup.Segment segment={segment} />
+                          )}
+                        </DateInputGroup.Input>
+                      </DateInputGroup>
+                    </DateField>
+                  )}
+                />
+                {errors.endDate ? (
+                  <span className="text-tiny text-danger">
+                    {errors.endDate.message as string}
+                  </span>
+                ) : (
+                  <span className="text-tiny text-default-500">
+                    Fecha de fin
+                  </span>
+                )}
+              </div>
+            </>
+          ) : (
+            // Single Mode
+            <div className="w-full flex flex-col gap-1">
+              <Controller
+                control={control}
+                name="date"
+                render={({ field }) => (
+                  <DateField
+                    fullWidth
+                    isInvalid={!!errors.date}
+                    // Uncontrolled
+                    onChange={(value) => {
+                      field.onChange(value?.toString() ?? "");
+                    }}
+                  >
+                    <Label>Fecha</Label>
+                    <DateInputGroup>
+                      <DateInputGroup.Input className={"bg-background"}>
+                        {(segment) => (
+                          <DateInputGroup.Segment segment={segment} />
+                        )}
+                      </DateInputGroup.Input>
+                    </DateInputGroup>
+                  </DateField>
+                )}
+              />
+              {errors.date ? (
+                <span className="text-tiny text-danger">
+                  {errors.date.message as string}
+                </span>
+              ) : (
+                <span className="text-tiny text-default-500">
+                  Selecciona la fecha
+                </span>
+              )}
+            </div>
+          )}
+
           {/* search button */}
           <Button fullWidth type="submit" isDisabled={isLoading}>
             {isLoading ? "Buscando..." : "Buscar Tasa"}

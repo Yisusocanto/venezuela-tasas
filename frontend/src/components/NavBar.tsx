@@ -1,5 +1,4 @@
 import Link from "next/link";
-import React from "react";
 
 function NavBar() {
   return (
@@ -9,8 +8,8 @@ function NavBar() {
         <h1 className="text-xl font-bold">Dolar Venezuela</h1>
       </div>
       <div className="flex gap-2">
-        <Link href={"/inicio"}>Inicio</Link>
-        <Link href={"/historia"}>Historia</Link>
+        <Link href={"/"}>Inicio</Link>
+        <Link href={"/historial"}>Historial</Link>
         <Link href={"/api"}>API</Link>
       </div>
     </div>

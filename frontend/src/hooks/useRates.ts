@@ -1,4 +1,8 @@
-import { getAllRates, getRateOnCertainDate } from "@/services/rateService";
+import {
+  getAllRates,
+  getRateForDateRange,
+  getRateOnCertainDate,
+} from "@/services/rateService";
 import { useQuery } from "@tanstack/react-query";
 
 export const useAllRates = () => {
@@ -17,5 +21,18 @@ export const useRateForCertainDate = (
     queryKey: ["rateCertainDate", currencyName, date],
     queryFn: () => getRateOnCertainDate(currencyName, date),
     enabled: enabled && !!currencyName && !!date,
+  });
+};
+
+export const useRateForDateRange = (
+  currencyName: string,
+  startDate: string,
+  endDate: string,
+  enabled: boolean = false,
+) => {
+  return useQuery({
+    queryKey: ["rateDateRange", currencyName, startDate, endDate],
+    queryFn: () => getRateForDateRange(currencyName, startDate, endDate),
+    enabled: enabled && !!currencyName && !!startDate && !!endDate,
   });
 };
