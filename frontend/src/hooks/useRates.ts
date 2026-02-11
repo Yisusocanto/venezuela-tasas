@@ -2,6 +2,7 @@ import {
   getAllRates,
   getRateForDateRange,
   getRateOnCertainDate,
+  rateHistory,
 } from "@/services/rateService";
 import { useQuery } from "@tanstack/react-query";
 
@@ -34,5 +35,12 @@ export const useRateForDateRange = (
     queryKey: ["rateDateRange", currencyName, startDate, endDate],
     queryFn: () => getRateForDateRange(currencyName, startDate, endDate),
     enabled: enabled && !!currencyName && !!startDate && !!endDate,
+  });
+};
+
+export const useRateHistory = (currencyName: string = "dolar") => {
+  return useQuery({
+    queryKey: ["rateHistory", currencyName],
+    queryFn: () => rateHistory(currencyName),
   });
 };

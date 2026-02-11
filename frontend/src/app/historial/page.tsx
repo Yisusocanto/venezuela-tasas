@@ -1,3 +1,4 @@
+import Chart from "@/components/Chart";
 import SearchSection from "@/components/SearchSection";
 import { getAllRates } from "@/services/rateService";
 
@@ -14,7 +15,7 @@ async function History() {
   }
 
   return (
-    <div className="flex flex-col w-full md:w-3/4 mx-auto mt-20 gap-8">
+    <div className="flex flex-col w-full md:w-3/4 mx-auto my-20 gap-8">
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold">Historial de tasa de cambios</h1>
         <p className="text-muted">
@@ -23,6 +24,7 @@ async function History() {
         </p>
       </div>
       <SearchSection allRates={rates} forRange />
+      <Chart />
     </div>
   );
 }

@@ -54,7 +54,7 @@ async def currency_rate(
     "/{currency_name}/history",
     tags=["Rate History"],
     summary="Get the records of the last month for a specific currency",
-    response_model=RateHistoryResponse,
+    response_model=RateListResponse,
 )
 async def rate_history(
     currency_name: Annotated[AvailableCurrencies, Path(title="Name of the currency.")],
@@ -62,7 +62,7 @@ async def rate_history(
 ):
     rate_repo = RateRepository(db)
     rate_history_list = await rate_repo.get_rate_history(currency_name=currency_name)
-    return {"history": rate_history_list, "results": len(rate_history_list)}
+    return {"rates": rate_history_list}
 
 
 @rates_router.get(

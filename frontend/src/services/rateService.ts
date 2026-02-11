@@ -34,3 +34,12 @@ export const getRateForDateRange = async (
   );
   return data;
 };
+
+export const rateHistory = async (
+  currencyName: string = "dolar",
+): Promise<{ rates: Rate[] }> => {
+  const data = await customFetch<{ rates: Rate[] }>(
+    `/api/v1/rates/${currencyName}/history`,
+  );
+  return data;
+};
