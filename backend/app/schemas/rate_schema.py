@@ -1,4 +1,3 @@
-from dataclasses import Field
 from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
@@ -37,8 +36,3 @@ class RateListResponse(BaseModel):
 
 class RateResponse(BaseModel):
     rate: RateSchemaDB
-
-
-class RateHistoryResponse(BaseModel):
-    history: list[RateSchemaDB]
-    results: int
