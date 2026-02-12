@@ -63,14 +63,14 @@ function Chart() {
     <Card className="w-full h-fit p-6 shadow-sm">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-accent-soft flex items-center justify-center">
             <TrendingUp size={20} className="text-emerald-500" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-foreground">
               Tendencia del Dólar
             </h2>
-            <p className="text-sm text-default-500">USD vs VES (Último mes)</p>
+            <p className="text-sm text-muted">USD vs VES (Último mes)</p>
           </div>
         </div>
       </div>
