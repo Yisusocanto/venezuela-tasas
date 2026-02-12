@@ -22,8 +22,8 @@ export const getRateForDateRange = async (
   currencyName: string,
   startDate: string,
   endDate: string,
-): Promise<{ history: Rate[]; results: number }> => {
-  const data = await customFetch<{ history: Rate[]; results: number }>(
+): Promise<{ rates: Rate[] }> => {
+  const data = await customFetch<{ rates: Rate[] }>(
     `/api/v1/rates/${currencyName}/rate_history_for_date_range`,
     {
       params: {

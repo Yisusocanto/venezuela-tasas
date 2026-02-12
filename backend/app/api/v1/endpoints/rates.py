@@ -1,5 +1,5 @@
-from datetime import datetime, timezone, timedelta
-from typing import Literal, Annotated
+from datetime import datetime
+from typing import Annotated
 from fastapi import APIRouter, HTTPException, Path, Query
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +7,6 @@ from app.db.database import get_db
 from app.repositories.rate import RateRepository
 from app.schemas import (
     RateResponse,
-    RateHistoryResponse,
     RateListResponse,
     AvailableCurrencies,
     AllRatesResponse,
@@ -107,7 +106,7 @@ async def currency_rate_on_a_certain_date(
     "/{currency_name}/rate_history_for_date_range",
     tags=["Rate History"],
     summary="Get the rate history for a date range.",
-    response_model=RateHistoryResponse,
+    response_model=RateListResponse,
 )
 async def rate_history_for_date_range(
     currency_name: Annotated[AvailableCurrencies, Path(title="Currency name.")],
@@ -141,4 +140,5 @@ async def rate_history_for_date_range(
     rate_list = await rate_repo.get_rate_history_for_date_range(
         currency_name=currency_name, start_date=start_datetime, end_date=end_datetime
     )
-    return {"history": rate_list, "results": len(rate_list)}
+
+    return {"rates": rate_list}

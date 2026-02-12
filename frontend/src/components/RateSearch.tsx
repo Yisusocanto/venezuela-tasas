@@ -84,14 +84,6 @@ function RateSearch({
     forRange && shouldFetch,
   );
 
-  // Helper to safely access data based on the query type
-  const getRatesFromData = (data: any) => {
-    if (!data) return null;
-    if ("history" in data) return data.history as Rate[];
-    if ("rates" in data) return data.rates as Rate[];
-    return null;
-  };
-
   const activeQuery = forRange ? rangeQuery : singleQuery;
   const { data, isLoading, isError, error, status } = activeQuery;
 
@@ -112,10 +104,9 @@ function RateSearch({
         return;
       }
 
-      const ratesData = getRatesFromData(data);
-      setRates(ratesData);
+      setRates(data?.rates ?? null);
 
-      if (ratesData) setError(null);
+      if (data?.rates) setError(null);
       setShouldFetch(false);
     }
   }, [
@@ -127,8 +118,6 @@ function RateSearch({
     error,
     setRates,
     setError,
-    // Add getRatesFromData to dependency array or move it inside useEffect/component scope
-    // (Defining it inside component scope before useEffect is fine, but better to keep it stable or simple)
   ]);
 
   const onSubmit = handleSubmit(() => {

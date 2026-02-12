@@ -119,4 +119,8 @@ class RateRepository:
 
         rates = result.scalars().all()
 
-        return [RateSchemaDB.model_validate(rate) for rate in rates] if rates else []
+        return (
+            [RateSchemaDB.model_validate(rate).model_dump() for rate in rates]
+            if rates
+            else []
+        )
