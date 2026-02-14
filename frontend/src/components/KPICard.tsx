@@ -10,7 +10,7 @@ interface KPICardProps {
 
 function KPICard({ currencyCode, rate, logo }: KPICardProps) {
   return (
-    <Card className="flex flex-col w-xs border p-6">
+    <Card className="w-full flex flex-col border p-6">
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-accent-soft-hover rounded-xl">{logo}</div>

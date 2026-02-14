@@ -83,16 +83,16 @@ function Calculator({ rates }: CalculatorProps) {
   };
 
   return (
-    <Card className="w-full p-8 border">
-      <Card.Title className="text-3xl font-bold flex gap-2 items-center">
+    <Card className="w-full p-4 md:p-8 border">
+      <Card.Title className="text-xl md:text-3xl font-bold flex gap-2 items-center">
         <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
           <RefreshCcwDot size={20} className="text-accent" />
         </span>
         Calculadora de Divisas
       </Card.Title>
-      <div className="p-4">
-        <Form className="flex flex-wrap gap-2 items-center">
-          <div className="flex-1 min-w-[200px] bg-background p-4 rounded-2xl">
+      <div className="">
+        <Form className="flex flex-col md:flex-row gap-2 items-center">
+          <div className="w-full flex-1 min-w-[200px] bg-background p-4 rounded-2xl">
             <TextField>
               <Label>Monto en Bolívares (VES)</Label>
               <Input
@@ -118,9 +118,10 @@ function Calculator({ rates }: CalculatorProps) {
             </Button>
           </div>
 
-          <div className="flex-2 flex gap-4  bg-background p-4 rounded-2xl items-center">
+          <div className="w-full flex-2 flex gap-4  bg-background p-4 rounded-2xl items-center">
             <div className="flex-1 w-fit ">
               <Select
+                placeholder="Seleccionar divisa"
                 selectedKey={selectedCurrency}
                 onSelectionChange={(key) =>
                   handleSelectCurrencyChange(key as Key)
@@ -147,7 +148,7 @@ function Calculator({ rates }: CalculatorProps) {
               </Select>
             </div>
 
-            <div className="flex-3 min-w-[200px]">
+            <div className="w-fit">
               <TextField>
                 <Label>Monto en {selectedCurrency}</Label>
                 <Input

@@ -125,7 +125,7 @@ function RateSearch({
   });
 
   return (
-    <Card className="p-8 gap-6 border">
+    <Card className="p-4 md:p-8 gap-6 border">
       <Card.Title className="text-3xl font-bold flex flex-row items-center gap-2">
         <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
           <Search size={20} className="text-accent" />
@@ -136,7 +136,7 @@ function RateSearch({
       <Card.Content>
         <form
           onSubmit={onSubmit}
-          className="flex flex-row justify-between items-center gap-4"
+          className="flex flex-col md:flex-row justify-between items-center gap-4"
         >
           {/* currency selector */}
           <div className="w-full flex flex-col gap-1">
@@ -146,6 +146,7 @@ function RateSearch({
               render={({ field }) => (
                 <Select
                   fullWidth
+                  placeholder="Seleccionar divisa"
                   isInvalid={!!errors.currencyName}
                   selectedKey={field.value}
                   onSelectionChange={(key) => {

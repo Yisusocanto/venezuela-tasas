@@ -15,7 +15,7 @@ async function History() {
   }
 
   return (
-    <div className="flex flex-col w-full md:w-3/4 mx-auto my-20 gap-8">
+    <div className="flex flex-col w-full px-4 md:p-0 md:w-3/4 mx-auto my-12 md:my-20 gap-8">
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold">Historial de tasa de cambios</h1>
         <p className="text-muted">

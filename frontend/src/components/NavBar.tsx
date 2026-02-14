@@ -13,19 +13,19 @@ function NavBar() {
   ];
 
   return (
-    <div className="w-full h-10 p-8 px-20 items-center bg-background-secondary  border-b flex justify-between">
+    <div className="w-full h-16 px-4 md:px-20 items-center bg-background-secondary border-b flex justify-between">
       <div className="flex items-center gap-2">
         <Image
           src={"/dolar-venezuela-icon.png"}
           alt="Dolar Venezuela icon."
-          width={40}
-          height={40}
+          width={30}
+          height={30}
         />
-        <Link href={"/"} className="text-2xl font-bold">
+        <Link href={"/"} className="text-lg md:text-2xl font-bold">
           Dolar Venezuela
         </Link>
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-2 md:gap-4">
         {links.map((link) => (
           <Link
             key={link.label}

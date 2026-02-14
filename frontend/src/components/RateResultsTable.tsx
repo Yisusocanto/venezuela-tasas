@@ -66,39 +66,44 @@ function RateResultsTable({ rates, error }: RateResultsTableProps) {
   });
 
   return (
-    <Card className="border p-0">
-      <table>
-        <thead className="table-auto bg-background">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="">
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="p-4 border-b text-muted text-start"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <th key={cell.id} className="p-4 border-b text-start">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <Card className="border p-0 overflow-x-auto">
+      <div className="min-w-full inline-block align-middle">
+        <table className="min-w-full">
+          <thead className="table-auto bg-background">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="">
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className="p-4 border-b text-muted text-start whitespace-nowrap"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <th
+                    key={cell.id}
+                    className="p-4 border-b text-start whitespace-nowrap"
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Card>
   );
 }

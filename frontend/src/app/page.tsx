@@ -33,8 +33,8 @@ export default async function Home() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-8 md:w-3/4 mx-auto mb-20">
-      <div className="mb-6 mt-12">
+    <div className="w-full px-4 md:p-0 flex flex-col gap-8 md:w-3/4 mx-auto mb-20">
+      <div className="mb-2 md:mb-6 mt-12">
         <h1 className="text-4xl font-bold ">Dolar Venezuela</h1>
         <span className="text-lg text-accent flex items-center gap-2">
           <Calendar size={18} />
@@ -42,7 +42,7 @@ export default async function Home() {
         </span>
       </div>
       <Calculator rates={rates} />
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="w-full items-center flex flex-col md:flex-row gap-4">
         {Object.entries(rates).map(([key, rate]) => {
           const Icon = currencyIcons[rate.currencyCode].icon;
 
