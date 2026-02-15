@@ -5,7 +5,7 @@ from app.core.config import settings
 # Import all models here for Alembic to discover them
 from app.models import Rate
 
-engine = create_async_engine(settings.DATABASE_URL)
+engine = create_async_engine(settings.DATABASE_URL, connect_args={"ssl": True})
 
 AsyncSessionLocal = async_sessionmaker(
     bind=engine, expire_on_commit=False, autoflush=False, class_=AsyncSession

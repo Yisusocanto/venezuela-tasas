@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     DEBUG: bool = Field(default=False)
     HOST: int = Field(default=8000)
-    DATABASE_URL: str = Field(default="DATABASE_URL")
+    DATABASE_URL: str = Field()
 
     ALLOWED_ORIGINS: list[str] = Field(default=["*"])
 
