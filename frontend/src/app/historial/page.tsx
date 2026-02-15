@@ -15,9 +15,11 @@ async function History() {
   }
 
   return (
-    <div className="flex flex-col w-full px-4 md:p-0 md:w-3/4 mx-auto my-12 md:my-20 gap-8">
-      <div className="flex flex-col">
-        <h1 className="text-3xl font-bold">Historial de tasa de cambios</h1>
+    <div className="flex flex-col w-full px-4 md:p-0 md:w-3/4 mx-auto gap-8 mb-20">
+      <div className="flex flex-col mt-12">
+        <h1 className="text-3xl md:text-5xl font-bold">
+          Historial de tasa de cambios
+        </h1>
         <p className="text-muted">
           explorar las tasas de cierre oficiales del BCV y las tendencias a lo
           largo del tiempo

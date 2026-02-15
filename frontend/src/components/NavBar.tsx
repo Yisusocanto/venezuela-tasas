@@ -17,12 +17,12 @@ function NavBar() {
       <div className="flex items-center gap-2">
         <Image
           src={"/dolar-venezuela-icon.png"}
-          alt="Dolar Venezuela icon."
+          alt="Venezuela Tasas icon."
           width={30}
           height={30}
         />
         <Link href={"/"} className="text-lg md:text-2xl font-bold">
-          Dolar Venezuela
+          Venezuela Tasas
         </Link>
       </div>
       <div className="flex gap-2 md:gap-4">

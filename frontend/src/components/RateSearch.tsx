@@ -49,7 +49,6 @@ function RateSearch({
 
   const {
     handleSubmit,
-    setValue,
     watch,
     control,
     formState: { errors },
@@ -125,8 +124,8 @@ function RateSearch({
   });
 
   return (
-    <Card className="p-4 md:p-8 gap-6 border">
-      <Card.Title className="text-3xl font-bold flex flex-row items-center gap-2">
+    <Card className="p-4 md:p-8 gap-4 md:gap-6 border">
+      <Card.Title className="text-xl md:text-3xl font-bold flex flex-row items-center gap-2">
         <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
           <Search size={20} className="text-accent" />
         </span>

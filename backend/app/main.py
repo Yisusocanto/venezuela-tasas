@@ -13,8 +13,6 @@ from app.api.v1.v1_routes import v1_routes
 async def lifespan(app: FastAPI):
     print("Initializing app...")
 
-    print("Database initialized.")
-
     await rate_scraping()
 
     loop = asyncio.get_running_loop()
@@ -33,9 +31,10 @@ async def lifespan(app: FastAPI):
 
 def create_app():
     app = FastAPI(
-        title="Dolar Venezuela",
-        description="API to consult the dolar in Venezuela",
+        title="Venezuela Tasas",
+        description="API to check the dollar and other exchange rates in Venezuela",
         lifespan=lifespan,
+        docs_url="/docs" if settings.DEBUG else None,
     )
 
     app.add_middleware(
