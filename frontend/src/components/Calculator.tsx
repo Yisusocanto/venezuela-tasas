@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { AllRates, Rate } from "@/types/Rate";
 import { useEffect, useState } from "react";
 import { RefreshCcwDot, Repeat, TrendingUp } from "lucide-react";
+import { NumericFormat, OnValueChange } from "react-number-format";
 
 const Schema = z.object({
   currency: z.coerce.number(),
@@ -70,16 +71,24 @@ function Calculator({ rates }: CalculatorProps) {
     setValue("currency", 1);
   };
 
-  const onBolivarInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value === "" ? 1 : Number(e.target.value);
-    setValue("bolivar", value);
-    setValue("currency", Number((value / currentRate).toFixed(2)));
+  const onBolivarInputChange = (v: number | undefined) => {
+    if (v === undefined) {
+      setValue("bolivar", "" as unknown as number);
+      setValue("currency", "" as unknown as number);
+      return;
+    }
+    setValue("bolivar", v);
+    setValue("currency", Number((v / currentRate).toFixed(2)));
   };
 
-  const onCurrencyInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value === "" ? 0 : Number(e.target.value);
-    setValue("currency", value);
-    setValue("bolivar", Number((value * currentRate).toFixed(2)));
+  const onCurrencyInputChange = (v: number | undefined) => {
+    if (v === undefined) {
+      setValue("currency", "" as unknown as number);
+      setValue("bolivar", "" as unknown as number);
+      return;
+    }
+    setValue("currency", v);
+    setValue("bolivar", Number((v * currentRate).toFixed(2)));
   };
 
   return (
@@ -95,17 +104,18 @@ function Calculator({ rates }: CalculatorProps) {
           <div className="w-full flex-1 min-w-[200px] bg-background p-4 rounded-2xl">
             <TextField>
               <Label>Monto en Bolívares (VES)</Label>
-              <Input
+              <NumericFormat
+                customInput={Input}
+                thousandSeparator
+                allowNegative={false}
                 className="border border-accent-soft bg-background"
-                type="number"
-                step="any"
-                value={typeof bolivarValue === "number" ? bolivarValue : ""}
-                min={1}
-                onChange={onBolivarInputChange}
+                value={bolivarValue}
+                onValueChange={(v, x) =>
+                  !!x.event ? onBolivarInputChange(v.floatValue) : null
+                }
               />
             </TextField>
           </div>
-
           <div className="flex-none">
             <Button
               onPress={resetForm}
@@ -118,9 +128,10 @@ function Calculator({ rates }: CalculatorProps) {
             </Button>
           </div>
 
-          <div className="w-full flex-2 flex gap-4  bg-background p-4 rounded-2xl items-center">
-            <div className="flex-1 w-fit ">
+          <div className="w-full flex-1 flex flex-col md:flex-row gap-4 bg-background p-4 rounded-2xl items-stretch md:items-center overflow-hidden min-w-0">
+            <div className="shrink-0">
               <Select
+                className={"w-full md:w-fit"}
                 placeholder="Seleccionar divisa"
                 selectedKey={selectedCurrency}
                 onSelectionChange={(key) =>
@@ -148,16 +159,19 @@ function Calculator({ rates }: CalculatorProps) {
               </Select>
             </div>
 
-            <div className="w-fit">
+            <div className="flex-1 min-w-0">
               <TextField>
                 <Label>Monto en {selectedCurrency}</Label>
-                <Input
+                <NumericFormat
+                  customInput={Input}
+                  thousandSeparator
+                  prefix="$"
+                  allowNegative={false}
                   className="border border-accent-soft bg-background"
-                  type="number"
-                  step="any"
-                  value={typeof currencyValue === "number" ? currencyValue : ""}
-                  min={1}
-                  onChange={onCurrencyInputChange}
+                  value={currencyValue}
+                  onValueChange={(v, x) =>
+                    !!x.event ? onCurrencyInputChange(v.floatValue) : null
+                  }
                 />
               </TextField>
             </div>
