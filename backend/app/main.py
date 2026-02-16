@@ -57,7 +57,7 @@ class HealthResponse(BaseModel):
     health: bool
 
 
-@app.head("/health")
+@app.head("/health", include_in_schema=False)
 @app.get(
     "/health",
     tags=["Health"],

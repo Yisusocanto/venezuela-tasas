@@ -6,7 +6,10 @@ from app.core.config import settings
 from app.models import Rate
 
 engine = create_async_engine(
-    settings.DATABASE_URL, connect_args={"ssl": False if settings.DEBUG else True}
+    settings.DATABASE_URL,
+    pool_pre_ping=True,
+    pool_recycle=300,
+    connect_args={"ssl": False if settings.DEBUG else True},
 )
 
 AsyncSessionLocal = async_sessionmaker(
