@@ -129,7 +129,8 @@ function RateSearch({
         <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
           <Search size={20} className="text-accent" />
         </span>
-        Busqueda avanzada {forRange ? "(Rango)" : "(Fecha)"}
+        Buscar tasas del pasado{" "}
+        {forRange ? "(Rango de fechas)" : "(Fecha exacta)"}
       </Card.Title>
       <Separator />
       <Card.Content>

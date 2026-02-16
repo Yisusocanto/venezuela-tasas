@@ -21,7 +21,7 @@ async function History() {
           Historial de tasa de cambios
         </h1>
         <p className="text-muted">
-          explorar las tasas de cierre oficiales del BCV y las tendencias a lo
+          Explorar las tasas de cierre oficiales del BCV y las tendencias a lo
           largo del tiempo
         </p>
       </div>

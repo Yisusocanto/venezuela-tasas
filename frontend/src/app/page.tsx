@@ -33,9 +33,9 @@ export default async function Home() {
 
   return (
     <div className="w-full px-4 md:p-0 flex flex-col gap-8 md:w-3/4 mx-auto mb-20">
-      <div className="mb-2 md:mb-6 mt-12">
+      <div className="mt-12">
         <h1 className="text-3xl md:text-5xl font-bold ">Tasas Venezuela</h1>
-        <span className="text-lg text-accent flex items-center gap-2">
+        <span className="text-lg text-muted dark:text-accent flex items-center gap-2">
           <Calendar size={18} />
           {dayjs().format("D [de] MMMM [del] YYYY")}
         </span>

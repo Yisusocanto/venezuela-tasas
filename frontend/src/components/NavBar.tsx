@@ -1,7 +1,8 @@
-import { linkVariants } from "@heroui/react";
+import { Button, linkVariants } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 function NavBar() {
   const pathname = usePathname();
@@ -22,10 +23,10 @@ function NavBar() {
           height={30}
         />
         <Link href={"/"} className="text-lg md:text-2xl font-bold">
-          Venezuela Tasas
+          Tasas Venezuela
         </Link>
       </div>
-      <div className="flex gap-2 md:gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
         {links.map((link) => (
           <Link
             key={link.label}
@@ -35,6 +36,7 @@ function NavBar() {
             {link.label}
           </Link>
         ))}
+        <ThemeToggle />
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ function KPICard({ currencyCode, rate, logo }: KPICardProps) {
       </div>
       <div className="flex flex-col">
         <span className="text-lg text-muted">
-          <strong className="text-4xl text-white">{rate}</strong> Bs
+          <strong className="text-4xl text-foreground">{rate}</strong> Bs
         </span>
         <span className="text-muted">Tasa oficial del BCV</span>
       </div>

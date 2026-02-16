@@ -5,6 +5,7 @@ import { Exo_2, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NavBar from "@/components/NavBar";
+import ThemeProvider from "@/providers/ThemeProvider";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -24,12 +25,14 @@ export default function RootLayout({
     },
   });
   return (
-    <html lang="en" className="dark" data-them="dark">
+    <html lang="en" suppressHydrationWarning>
       <body className={`text-foreground bg-background ${exo2.className}`}>
-        <QueryClientProvider client={queryClient}>
-          <NavBar />
-          {children}
-        </QueryClientProvider>
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <NavBar />
+            {children}
+          </QueryClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
