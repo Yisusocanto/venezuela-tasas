@@ -23,7 +23,11 @@ function FeatureCard({ content, linkHref, linkName, title }: FeatureCardProps) {
         <p className="text-muted">{content}</p>
       </Card.Content>
       <Card.Footer>
-        <Link className={`${slots.base()} text-lg text-accent`} href={linkHref}>
+        <Link
+          className={`${slots.base()} text-lg text-accent`}
+          href={linkHref}
+          target="_blank"
+        >
           {linkName}
           <HeroLink.Icon className={slots.icon()} />
         </Link>

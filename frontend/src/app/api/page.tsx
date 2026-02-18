@@ -11,7 +11,7 @@ function Api() {
       title: "Empezando",
       icon: <Terminal size={20} className="text-accent" />,
       linkName: "Documentación",
-      linkHref: "",
+      linkHref: "https://venezuela-tasas.onrender.com/redoc",
       content:
         "Para comenzar a usar la API no necesitas API keys ni configuraciones complejas, solo empezar a hacer peticiones a los endpoints. El diseño se enfoca en la simplicidad.",
     },
@@ -19,7 +19,7 @@ function Api() {
       title: "Cómo funciona",
       icon: <Shield size={20} className="text-accent" />,
       linkName: "Documentación",
-      linkHref: "",
+      linkHref: "https://venezuela-tasas.onrender.com/redoc",
       content:
         "Los datos se sincronizan diariamente con la tasa oficial del BCV. Incluye validaciones robustas y reintentos automáticos para garantizar información siempre precisa.",
     },
@@ -27,7 +27,7 @@ function Api() {
       title: "Colaborar",
       icon: <Globe size={20} className="text-accent" />,
       linkName: "Repositorio de Github",
-      linkHref: "",
+      linkHref: "https://github.com/Yisusocanto/venezuela-tasas",
       content:
         "El código abierto es el corazón del proyecto. Contribuye al proyecto, reporta problemas o sugiere características en nuestra comunidad de Github.",
     },
