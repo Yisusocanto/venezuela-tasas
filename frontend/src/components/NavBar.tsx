@@ -11,6 +11,7 @@ function NavBar() {
   const links = [
     { label: "Inicio", href: "/" },
     { label: "Historial", href: "/historial" },
+    { label: "Api", href: "/api" },
   ];
 
   return (
