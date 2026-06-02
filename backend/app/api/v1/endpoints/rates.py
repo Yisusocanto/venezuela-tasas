@@ -104,7 +104,7 @@ def rate_history_for_date_range(
     "/{currency_name}/history/{date}",
     tags=["History"],
     summary="Get the rate of a currency on a specific date",
-    response_model=ExchangeRateResponse,
+    response_model=ExchangeRateListResponse,
 )
 def currency_rate_on_a_certain_date(
     currency_name: Annotated[AvailableCurrencies, Path(title="Currency name")],
@@ -129,4 +129,4 @@ def currency_rate_on_a_certain_date(
             detail="There are no exchange rate results for the date shown.",
         )
 
-    return {"rate": exchange_rate}
+    return {"rates": [exchange_rate]}
