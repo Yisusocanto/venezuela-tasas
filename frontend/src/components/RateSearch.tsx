@@ -4,7 +4,6 @@ import {
 	Button,
 	Card,
 	DateField,
-	DateInputGroup,
 	Label,
 	ListBox,
 	Select,
@@ -80,8 +79,6 @@ function RateSearch({
 
 	const activeQuery = forRange ? rangeQuery : singleQuery;
 	const { data, isLoading, isError, error, status } = activeQuery;
-
-	console.log(data);
 
 	useEffect(() => {
 		if (shouldFetch && !isLoading) {
@@ -200,13 +197,11 @@ function RateSearch({
 												field.onChange(value?.toString() ?? "");
 											}}>
 											<Label>Desde</Label>
-											<DateInputGroup>
-												<DateInputGroup.Input className={"bg-background"}>
-													{(segment) => (
-														<DateInputGroup.Segment segment={segment} />
-													)}
-												</DateInputGroup.Input>
-											</DateInputGroup>
+											<DateField.Group>
+												<DateField.Input className={"bg-background"}>
+													{(segment) => <DateField.Segment segment={segment} />}
+												</DateField.Input>
+											</DateField.Group>
 										</DateField>
 									)}
 								/>
@@ -235,13 +230,11 @@ function RateSearch({
 												field.onChange(value?.toString() ?? "");
 											}}>
 											<Label>Hasta</Label>
-											<DateInputGroup>
-												<DateInputGroup.Input className={"bg-background"}>
-													{(segment) => (
-														<DateInputGroup.Segment segment={segment} />
-													)}
-												</DateInputGroup.Input>
-											</DateInputGroup>
+											<DateField.Group>
+												<DateField.Input className={"bg-background"}>
+													{(segment) => <DateField.Segment segment={segment} />}
+												</DateField.Input>
+											</DateField.Group>
 										</DateField>
 									)}
 								/>
@@ -271,13 +264,11 @@ function RateSearch({
 											field.onChange(value?.toString() ?? "");
 										}}>
 										<Label>Fecha</Label>
-										<DateInputGroup>
-											<DateInputGroup.Input className={"bg-background"}>
-												{(segment) => (
-													<DateInputGroup.Segment segment={segment} />
-												)}
-											</DateInputGroup.Input>
-										</DateInputGroup>
+										<DateField.Group>
+											<DateField.Input className={"bg-background"}>
+												{(segment) => <DateField.Segment segment={segment} />}
+											</DateField.Input>
+										</DateField.Group>
 									</DateField>
 								)}
 							/>
