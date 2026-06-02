@@ -1,14 +1,17 @@
-export interface Rate {
-  id: number;
-  name: string;
-  rate: number;
-  date: string;
-  currencyCode: string;
+export interface AllRates {
+  dolar: ExchangeRate;
+  euro: ExchangeRate;
+  lira: ExchangeRate;
+  rublo: ExchangeRate;
 }
 
-export interface AllRates {
-  dolar: Rate;
-  euro: Rate;
-  lira: Rate;
-  rublo: Rate;
+export interface ExchangeRate {
+  exchangeRate: string;
+  creationDate: string;
+  currency?: Currency;
+}
+
+export interface Currency {
+  code: string;
+  name: string;
 }

@@ -1,29 +1,30 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlmodel import create_engine, Session
 
 from app.core.config import settings
 
 # Import all models here for Alembic to discover them
-from app.models import Rate
+from app.models import ExchangeRate, Currency
 
-engine = create_async_engine(
+connect_args = {}
+
+if not settings.DEBUG:
+    # 'require' es el estándar para conexiones seguras en producción (como en Render/Heroku/AWS)
+    connect_args["sslmode"] = "require"
+
+engine = create_engine(
     settings.DATABASE_URL,
     pool_pre_ping=True,
     pool_recycle=300,
-    connect_args={"ssl": False if settings.DEBUG else True},
-)
-
-AsyncSessionLocal = async_sessionmaker(
-    bind=engine, expire_on_commit=False, autoflush=False, class_=AsyncSession
+    connect_args=connect_args,
 )
 
 
-async def get_db():
-    async with AsyncSessionLocal() as session:
+def get_db():
+    with Session(engine) as session:
         try:
             yield session
-            await session.commit()
         except Exception as e:
-            await session.rollback()
+            session.rollback()
             raise e
         finally:
-            await session.close()
+            session.close()

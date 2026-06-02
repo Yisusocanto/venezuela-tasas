@@ -1,4 +1,5 @@
 # Import all models here for Alembic
-from app.models.rate import Rate  # noqa
+from .exchange_rate import ExchangeRate
+from .currency import Currency
 
-__all__ = ["Rate"]
+__all__ = ["ExchangeRate", "Currency"]

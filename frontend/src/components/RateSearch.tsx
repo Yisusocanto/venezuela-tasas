@@ -10,7 +10,7 @@ import {
   Select,
   Separator,
 } from "@heroui/react";
-import type { AllRates, Rate } from "@/types/Rate";
+import type { AllRates, ExchangeRate } from "@/types/Rate";
 import z from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +34,7 @@ const rangeDateSchema = z.object({
 
 interface RateSearchProps {
   allRates: AllRates;
-  setRates: (rates: Rate[] | null) => void;
+  setRates: (rates: ExchangeRate[] | null) => void;
   setError: (error: string | null) => void;
   forRange?: boolean;
 }
@@ -165,11 +165,11 @@ function RateSearch({
                     <ListBox>
                       {Object.entries(allRates).map(([key, rate]) => (
                         <ListBox.Item
-                          key={rate.name}
-                          id={rate.name}
-                          textValue={rate.name}
+                          key={key}
+                          id={key}
+                          textValue={rate.currency?.name ?? key}
                         >
-                          {rate.currencyCode} - ({rate.name})
+                          {rate.currency?.code ?? key} - ({rate.currency?.name ?? key})
                         </ListBox.Item>
                       ))}
                     </ListBox>

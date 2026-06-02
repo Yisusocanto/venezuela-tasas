@@ -211,8 +211,9 @@ function Api() {
                 <span className="text-warning">json</span>();{"\n"}
                 {"\n"}
                 <span className="text-muted">
-                  {"// "}→ {"{"} dolar: {"{"} rate: 78.47, name:
-                  &quot;dolar&quot;, ... {"}"}, ... {"}"}
+                  {"// "}→ {"{"} dolar: {"{"} exchangeRate: &quot;78.47&quot;,
+                  currency: {"{"} code: &quot;USD&quot;, name:
+                  &quot;Dolar&quot; {"}"} {"}"}, ... {"}"}
                 </span>
               </code>
             </pre>

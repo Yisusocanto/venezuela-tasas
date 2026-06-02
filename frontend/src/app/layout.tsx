@@ -1,38 +1,31 @@
-"use client";
-
 import type { Metadata } from "next";
-import { Exo_2, Geist, Geist_Mono } from "next/font/google";
+import { Exo_2 } from "next/font/google";
 import "./globals.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NavBar from "@/components/NavBar";
-import ThemeProvider from "@/providers/ThemeProvider";
+import Providers from "@/providers/Providers";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
 });
+
+export const metadata: Metadata = {
+  title: "Tasas Venezuela — Tasas de cambio del BCV",
+  description:
+    "Consulta las tasas de cambio oficiales del Banco Central de Venezuela en tiempo real. Dólar, Euro, Lira y Rublo.",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        retry: false,
-      },
-    },
-  });
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body className={`text-foreground bg-background ${exo2.className}`}>
-        <ThemeProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavBar />
-            {children}
-          </QueryClientProvider>
-        </ThemeProvider>
+        <Providers>
+          <NavBar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -1,30 +1,30 @@
 import { customFetch } from "@/lib/api";
-import type { AllRates, Rate } from "@/types/Rate";
+import type { AllRates, ExchangeRate } from "@/types/Rate";
 
-export const getAllRates = async (): Promise<AllRates> => {
+export const getAllExchangeRates = async (): Promise<AllRates> => {
   const data = await customFetch<AllRates>("/api/v1/rates", {
     next: { revalidate: 60 },
   });
   return data;
 };
 
-export const getRateOnCertainDate = async (
+export const getExchangeRateOnACertainDate = async (
   currencyName: string,
   date: string,
-): Promise<{ rates: Rate[] }> => {
-  const data = await customFetch<{ rates: Rate[] }>(
-    `/api/v1/rates/${currencyName}/date/${date}`,
+): Promise<{ rates: ExchangeRate[] }> => {
+  const data = await customFetch<{ rates: ExchangeRate[] }>(
+    `/api/v1/rates/${currencyName}/history/${date}`,
   );
   return data;
 };
 
-export const getRateForDateRange = async (
+export const getExchangeRateHistoryForDateRange = async (
   currencyName: string,
   startDate: string,
   endDate: string,
-): Promise<{ rates: Rate[] }> => {
-  const data = await customFetch<{ rates: Rate[] }>(
-    `/api/v1/rates/${currencyName}/rate_history_for_date_range`,
+): Promise<{ rates: ExchangeRate[] }> => {
+  const data = await customFetch<{ rates: ExchangeRate[] }>(
+    `/api/v1/rates/${currencyName}/history/date_range`,
     {
       params: {
         start_date: startDate,
@@ -35,10 +35,10 @@ export const getRateForDateRange = async (
   return data;
 };
 
-export const rateHistory = async (
+export const getExchangeRateHistory = async (
   currencyName: string = "dolar",
-): Promise<{ rates: Rate[] }> => {
-  const data = await customFetch<{ rates: Rate[] }>(
+): Promise<{ rates: ExchangeRate[] }> => {
+  const data = await customFetch<{ rates: ExchangeRate[] }>(
     `/api/v1/rates/${currencyName}/history`,
   );
   return data;

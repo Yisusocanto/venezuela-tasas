@@ -13,7 +13,7 @@ from app.api.v1.v1_routes import v1_routes
 async def lifespan(app: FastAPI):
     print("Initializing app...")
 
-    await rate_scraping()
+    rate_scraping()
 
     loop = asyncio.get_running_loop()
     scheduler = AsyncIOScheduler(loop=loop)

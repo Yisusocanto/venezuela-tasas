@@ -1,6 +1,6 @@
 import Calculator from "@/components/Calculator";
 import KPICard from "@/components/KPICard";
-import { getAllRates } from "@/services/rateService";
+import { getAllExchangeRates } from "@/services/rateService";
 import { currencyIcons } from "@/config/currencies";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
@@ -12,7 +12,7 @@ dayjs.locale("es");
 export default async function Home() {
   let rates;
   try {
-    rates = await getAllRates();
+    rates = await getAllExchangeRates();
   } catch (error) {
     console.error("Error fetching rates in Home:", error);
   }
@@ -40,17 +40,19 @@ export default async function Home() {
           {dayjs().format("D [de] MMMM [del] YYYY")}
         </span>
       </div>
-      <Calculator rates={rates} />
+      <Calculator exchangeRates={rates} />
       <div className="w-full items-center flex flex-col md:flex-row gap-4">
         {Object.entries(rates).map(([key, rate]) => {
-          const Icon = currencyIcons[rate.currencyCode].icon;
+          const iconConfig = currencyIcons[rate.currency?.code ?? ""];
+          if (!iconConfig) return null;
+          const Icon = iconConfig.icon;
 
           return (
             <KPICard
-              key={rate.currencyCode}
-              currencyCode={rate.currencyCode}
-              currencyName={rate.name}
-              rate={rate.rate}
+              key={rate.currency?.code ?? key}
+              currencyCode={rate.currency?.code ?? key}
+              currencyName={rate.currency?.name ?? key}
+              exchangeRate={rate.exchangeRate}
               logo={<Icon />}
             />
           );

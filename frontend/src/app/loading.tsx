@@ -24,10 +24,10 @@ export default function Loading() {
 
       {/* KPI Cards Skeleton */}
       <div className="flex flex-col md:flex-row gap-4">
-        {[1, 2, 3].map((item) => (
+        {[1, 2, 3, 4].map((item) => (
           <Card
             key={item}
-            className="flex flex-col w-full md:w-1/3 border p-6 space-y-4"
+            className="flex flex-col w-full border p-6 space-y-4"
           >
             <div className="flex justify-between">
               <div className="flex items-center gap-2">

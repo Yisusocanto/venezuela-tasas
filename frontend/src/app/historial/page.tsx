@@ -1,11 +1,11 @@
 import Chart from "@/components/Chart";
 import SearchSection from "@/components/SearchSection";
-import { getAllRates } from "@/services/rateService";
+import { getAllExchangeRates } from "@/services/rateService";
 
 async function History() {
   let rates;
   try {
-    rates = await getAllRates();
+    rates = await getAllExchangeRates();
   } catch (error) {
     console.log("error", error);
   }

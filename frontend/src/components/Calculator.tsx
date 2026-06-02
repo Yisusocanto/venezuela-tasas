@@ -14,10 +14,11 @@ import {
 } from "@heroui/react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { AllRates, Rate } from "@/types/Rate";
+import type { AllRates, ExchangeRate } from "@/types/Rate";
 import { useEffect, useState } from "react";
 import { RefreshCcwDot, Repeat, TrendingUp } from "lucide-react";
 import { NumericFormat, OnValueChange } from "react-number-format";
+import Big from "big.js";
 
 const Schema = z.object({
   currency: z.coerce.number(),
@@ -25,38 +26,38 @@ const Schema = z.object({
 });
 
 interface CalculatorProps {
-  rates: AllRates;
+  exchangeRates: AllRates;
 }
 
-function Calculator({ rates }: CalculatorProps) {
+function Calculator({ exchangeRates }: CalculatorProps) {
   const [selectedCurrency, setSelectedCurrency] =
     useState<keyof AllRates>("dolar");
 
-  const currentRate = rates[selectedCurrency].rate;
+  const currentRate = exchangeRates[selectedCurrency].exchangeRate;
 
   const { setValue, reset, watch } = useForm({
     resolver: zodResolver(Schema),
     defaultValues: {
-      bolivar: rates.dolar.rate,
+      bolivar: Number(exchangeRates.dolar.exchangeRate),
       currency: 1,
     },
   });
 
   useEffect(() => {
-    if (rates) {
+    if (exchangeRates) {
       reset({
-        bolivar: rates.dolar.rate,
+        bolivar: Number(exchangeRates.dolar.exchangeRate),
         currency: 1,
       });
     }
-  }, [rates, reset]);
+  }, [exchangeRates, reset]);
 
   const bolivarValue = watch("bolivar") as number;
   const currencyValue = watch("currency") as number;
 
   const resetForm = () => {
     reset({
-      bolivar: rates.dolar.rate,
+      bolivar: Number(exchangeRates.dolar.exchangeRate),
       currency: 1,
     });
     setSelectedCurrency("dolar");
@@ -65,10 +66,20 @@ function Calculator({ rates }: CalculatorProps) {
   const handleSelectCurrencyChange = (value: Key) => {
     const currencyKey = value as keyof AllRates;
     setSelectedCurrency(currencyKey);
-    const newRate = rates[currencyKey].rate;
+    const newRate = exchangeRates[currencyKey].exchangeRate;
     // Update currency amount based on current bolivars
-    setValue("bolivar", newRate);
+    setValue("bolivar", Number(newRate));
     setValue("currency", 1);
+  };
+
+  const calculator = (
+    exchangeRate: string,
+    currencyValue: number,
+    method: "divide" | "multiply",
+  ) => {
+    return method === "divide"
+      ? Big(currencyValue).div(currentRate)
+      : Big(currencyValue).times(currentRate);
   };
 
   const onBolivarInputChange = (v: number | undefined) => {
@@ -77,8 +88,10 @@ function Calculator({ rates }: CalculatorProps) {
       setValue("currency", "" as unknown as number);
       return;
     }
+
+    const newValue = calculator(currentRate, v, "divide");
     setValue("bolivar", v);
-    setValue("currency", Number((v / currentRate).toFixed(2)));
+    setValue("currency", Number(newValue.toFixed(2)));
   };
 
   const onCurrencyInputChange = (v: number | undefined) => {
@@ -87,8 +100,9 @@ function Calculator({ rates }: CalculatorProps) {
       setValue("bolivar", "" as unknown as number);
       return;
     }
+    const newValue = calculator(currentRate, v, "multiply");
     setValue("currency", v);
-    setValue("bolivar", Number((v * currentRate).toFixed(2)));
+    setValue("bolivar", Number(newValue.toFixed(2)));
   };
 
   return (
@@ -145,13 +159,13 @@ function Calculator({ rates }: CalculatorProps) {
                 </Select.Trigger>
                 <Select.Popover className={"border"}>
                   <ListBox>
-                    {Object.entries(rates).map(([key, rate]) => (
+                    {Object.entries(exchangeRates).map(([key, rate]) => (
                       <ListBox.Item
                         key={key}
                         id={key}
-                        textValue={rate.currencyCode}
+                        textValue={rate.currency.code}
                       >
-                        {rate.currencyCode} - ({rate.name})
+                        {rate.currency.code} - ({rate.currency.name})
                       </ListBox.Item>
                     ))}
                   </ListBox>
@@ -161,7 +175,7 @@ function Calculator({ rates }: CalculatorProps) {
 
             <div className="flex-1 min-w-0">
               <TextField>
-                <Label>Monto en {selectedCurrency}</Label>
+                <Label>Monto en {exchangeRates[selectedCurrency].currency?.code ?? selectedCurrency}</Label>
                 <NumericFormat
                   customInput={Input}
                   thousandSeparator
@@ -185,12 +199,10 @@ function Calculator({ rates }: CalculatorProps) {
             <span className="rounded-full bg-accent-soft p-2 flex items-center justify-center">
               <TrendingUp size={20} className="text-accent" />
             </span>
-            <span className="text-primary text-xl">1 {selectedCurrency}</span>
+            <span className="text-primary text-xl">1 {exchangeRates[selectedCurrency].currency?.code ?? selectedCurrency}</span>
             <span className="text-muted-foreground text-lg">=</span>
             <span className="text-accent text-2xl">
-              {currentRate.toLocaleString("es-VE", {
-                minimumFractionDigits: 2,
-              })}
+              {currentRate}
               VES
             </span>
           </div>

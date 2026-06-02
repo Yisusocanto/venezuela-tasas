@@ -1,15 +1,15 @@
 import {
-  getAllRates,
-  getRateForDateRange,
-  getRateOnCertainDate,
-  rateHistory,
+  getAllExchangeRates,
+  getExchangeRateHistory,
+  getExchangeRateHistoryForDateRange,
+  getExchangeRateOnACertainDate,
 } from "@/services/rateService";
 import { useQuery } from "@tanstack/react-query";
 
 export const useAllRates = () => {
   return useQuery({
     queryKey: ["allRates"],
-    queryFn: getAllRates,
+    queryFn: getAllExchangeRates,
   });
 };
 
@@ -20,7 +20,7 @@ export const useRateForCertainDate = (
 ) => {
   return useQuery({
     queryKey: ["rateCertainDate", currencyName, date],
-    queryFn: () => getRateOnCertainDate(currencyName, date),
+    queryFn: () => getExchangeRateOnACertainDate(currencyName, date),
     enabled: enabled && !!currencyName && !!date,
   });
 };
@@ -33,7 +33,8 @@ export const useRateForDateRange = (
 ) => {
   return useQuery({
     queryKey: ["rateDateRange", currencyName, startDate, endDate],
-    queryFn: () => getRateForDateRange(currencyName, startDate, endDate),
+    queryFn: () =>
+      getExchangeRateHistoryForDateRange(currencyName, startDate, endDate),
     enabled: enabled && !!currencyName && !!startDate && !!endDate,
   });
 };
@@ -41,6 +42,6 @@ export const useRateForDateRange = (
 export const useRateHistory = (currencyName: string = "dolar") => {
   return useQuery({
     queryKey: ["rateHistory", currencyName],
-    queryFn: () => rateHistory(currencyName),
+    queryFn: () => getExchangeRateHistory(currencyName),
   });
 };

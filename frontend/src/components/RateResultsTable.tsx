@@ -1,4 +1,4 @@
-import { Rate } from "@/types/Rate";
+import { ExchangeRate } from "@/types/Rate";
 import { Card } from "@heroui/react";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
@@ -12,30 +12,30 @@ import {
 dayjs.locale("es");
 
 interface RateResultsTableProps {
-  rates: Rate[] | null;
+  rates: ExchangeRate[] | null;
   error: string | null;
 }
 
 function RateResultsTable({ rates, error }: RateResultsTableProps) {
-  const columnHelper = createColumnHelper<Rate>();
+  const columnHelper = createColumnHelper<ExchangeRate>();
 
   const columns = [
     columnHelper.accessor(
-      (row) => dayjs(row.date).format("D [de] MMMM [del] YYYY"),
+      (row) => dayjs(row.creationDate).format("D [de] MMMM [del] YYYY"),
       {
         id: "date",
         header: "DATE",
       },
     ),
-    columnHelper.accessor("name", {
+    columnHelper.accessor("currency.name", {
       header: "DIVISA",
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor("currencyCode", {
+    columnHelper.accessor("currency.code", {
       header: "CODIGO",
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor("rate", {
+    columnHelper.accessor("exchangeRate", {
       header: "TASA",
       cell: (info) => info.getValue(),
     }),
@@ -92,12 +92,12 @@ function RateResultsTable({ rates, error }: RateResultsTableProps) {
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <th
+                  <td
                     key={cell.id}
                     className="p-4 border-b text-start whitespace-nowrap"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </th>
+                  </td>
                 ))}
               </tr>
             ))}

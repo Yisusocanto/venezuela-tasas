@@ -1,16 +1,14 @@
-from datetime import datetime
 from typing import Annotated
-from fastapi import APIRouter, HTTPException, Path, Query
-from fastapi.params import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, HTTPException, Path, Query, Depends
+from sqlmodel import Session
 from app.db.database import get_db
-from app.repositories.rate import RateRepository
-from app.schemas import (
-    RateResponse,
-    RateListResponse,
+from app.schemas.schemas import (
     AvailableCurrencies,
-    AllRatesResponse,
+    AllExchangeRatesResponse,
+    ExchangeRateListResponse,
+    ExchangeRateResponse,
 )
+from app.repositories.exchange_rate_repo import ExchangeRateRepository
 
 rates_router = APIRouter()
 
@@ -18,97 +16,62 @@ rates_router = APIRouter()
 @rates_router.get(
     "/",
     tags=["Rates"],
-    summary="Get the rates of the currencies",
-    response_model=AllRatesResponse,
+    summary="Get exchange rates for all currencies.",
+    response_model=AllExchangeRatesResponse,
 )
-async def rates(db: AsyncSession = Depends(get_db)):
-    rate_repo = RateRepository(db)
+def rates(db: Session = Depends(get_db)):
+    exchange_rate_repo = ExchangeRateRepository(db)
 
-    rate_list = await rate_repo.get_all_rates()
-    rates_by_name = {rate["name"]: rate for rate in rate_list}
-    return rates_by_name
+    exchange_rates = exchange_rate_repo.get_all_exchange_rates()
+    return exchange_rates
 
 
 @rates_router.get(
     "/{currency_name}",
-    tags=["Currency Rate"],
+    tags=["Rates"],
     summary="Get the current exchange rate for a specific currency.",
-    response_model=RateResponse,
+    response_model=ExchangeRateResponse,
 )
-async def currency_rate(
+def currency_rate(
     currency_name: Annotated[AvailableCurrencies, Path(title="Name of the currency.")],
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
 ):
-    rate_repo = RateRepository(db)
-    rate = await rate_repo.get_currency_rate(currency_name=currency_name)
-    if not rate:
+    exchange_rate_repo = ExchangeRateRepository(db)
+    exchange_rate = exchange_rate_repo.get_currency_exchange_rate(
+        currency_name=currency_name
+    )
+    if not exchange_rate:
         raise HTTPException(
             status_code=404, detail="There are not results for the specified currency."
         )
 
-    return {"rate": rate}
+    return {"rate": exchange_rate}
 
 
 @rates_router.get(
     "/{currency_name}/history",
-    tags=["Rate History"],
-    summary="Get the records of the last month for a specific currency",
-    response_model=RateListResponse,
+    tags=["History"],
+    summary="Obtains the exchange rates of a currency for the last 30 days.",
+    response_model=ExchangeRateListResponse,
 )
-async def rate_history(
+def rate_history(
     currency_name: Annotated[AvailableCurrencies, Path(title="Name of the currency.")],
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
 ):
-    rate_repo = RateRepository(db)
-    rate_history_list = await rate_repo.get_rate_history(currency_name=currency_name)
-    return {"rates": rate_history_list}
-
-
-@rates_router.get(
-    "/{currency_name}/date/{date}",
-    tags=["Rate History"],
-    summary="Get the rate of a currency on a specific date",
-    response_model=RateListResponse,
-)
-async def currency_rate_on_a_certain_date(
-    currency_name: Annotated[AvailableCurrencies, Path(title="Currency name")],
-    date: Annotated[
-        str,
-        Path(
-            title="Date of the exchange rates to consult",
-            examples=["2026-01-30", "2026-10-01"],
-            pattern="^\d{4}-\d{2}-\d{2}$",
-        ),
-    ],
-    db: AsyncSession = Depends(get_db),
-):
-    rate_repo = RateRepository(db)
-
-    try:
-        date_datetime = datetime.strptime(date, "%Y-%m-%d")
-    except ValueError as v:
-        print(f"Value error on currency_rate_on_a_certain_date: {v}")
-        raise HTTPException(status_code=400, detail="The entered date is not valid.")
-
-    rate = await rate_repo.get_currency_rate_on_a_certain_date(
-        currency_name=currency_name, date=date_datetime
+    exchange_rate_repo = ExchangeRateRepository(db)
+    exchange_rate_list = exchange_rate_repo.get_exchange_rate_history(
+        currency_name=currency_name
     )
-    if not rate:
-        raise HTTPException(
-            status_code=404,
-            detail="There are no exchange rate results for the date shown.",
-        )
-
-    return {"rates": [rate]}
+    return {"rates": exchange_rate_list}
 
 
 @rates_router.get(
-    "/{currency_name}/rate_history_for_date_range",
-    tags=["Rate History"],
+    "/{currency_name}/history/date_range",
+    tags=["History"],
     summary="Get the rate history for a date range.",
-    response_model=RateListResponse,
+    response_model=ExchangeRateListResponse,
 )
-async def rate_history_for_date_range(
+def rate_history_for_date_range(
     currency_name: Annotated[AvailableCurrencies, Path(title="Currency name.")],
     start_date: Annotated[
         str,
@@ -126,19 +89,44 @@ async def rate_history_for_date_range(
             pattern="^\d{4}-\d{2}-\d{2}$",
         ),
     ],
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
 ):
-    rate_repo = RateRepository(db)
+    exchange_rate_repo = ExchangeRateRepository(db)
 
-    try:
-        start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
-        end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
-    except ValueError as v:
-        print(f"Error on rate_history_for_date_range: {v}")
-        raise HTTPException(status_code=400, detail="Invalid date.")
-
-    rate_list = await rate_repo.get_rate_history_for_date_range(
-        currency_name=currency_name, start_date=start_datetime, end_date=end_datetime
+    exchange_rate_list = exchange_rate_repo.get_exchange_rate_history_for_date_range(
+        currency_name=currency_name, start_date=start_date, end_date=end_date
     )
 
-    return {"rates": rate_list}
+    return {"rates": exchange_rate_list}
+
+
+@rates_router.get(
+    "/{currency_name}/history/{date}",
+    tags=["History"],
+    summary="Get the rate of a currency on a specific date",
+    response_model=ExchangeRateResponse,
+)
+def currency_rate_on_a_certain_date(
+    currency_name: Annotated[AvailableCurrencies, Path(title="Currency name")],
+    date: Annotated[
+        str,
+        Path(
+            title="Date of the exchange rates to consult",
+            examples=["2026-01-30", "2026-10-01"],
+            pattern="^\d{4}-\d{2}-\d{2}$",
+        ),
+    ],
+    db: Session = Depends(get_db),
+):
+    exchange_rate_repo = ExchangeRateRepository(db)
+
+    exchange_rate = exchange_rate_repo.get_exchange_rate_on_a_certain_date(
+        currency_name=currency_name, filter_date=date
+    )
+    if not exchange_rate:
+        raise HTTPException(
+            status_code=404,
+            detail="There are no exchange rate results for the date shown.",
+        )
+
+    return {"rate": exchange_rate}

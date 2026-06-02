@@ -1,6 +1,7 @@
 "use client";
 
 import { useRateHistory } from "@/hooks/useRates";
+import { ExchangeRate } from "@/types/Rate";
 import { Card } from "@heroui/react";
 import dayjs from "dayjs";
 import { TrendingUp } from "lucide-react";
@@ -50,8 +51,8 @@ function Chart() {
             <span className="text-default-500 text-sm font-medium">VES</span>
           </div>
           <div className="flex items-center gap-1 mt-1">
-            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-            <span className="text-emerald-500 text-xs font-medium">+0.85%</span>
+            {/* <div className="w-2 h-2 rounded-full bg-emerald-500"></div> */}
+            {/* <span className="text-emerald-500 text-xs font-medium">+0.85%</span> */}
           </div>
         </div>
       );
@@ -94,7 +95,9 @@ function Chart() {
               opacity={0.2}
             />
             <XAxis
-              dataKey={(data) => dayjs(data.date).format("MMM DD")}
+              dataKey={(data: ExchangeRate) =>
+                dayjs(data.creationDate).format("MMM DD")
+              }
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#71717a", fontSize: 12 }}
@@ -102,7 +105,7 @@ function Chart() {
               minTickGap={30}
             />
             <YAxis
-              dataKey={(data) => data.rate + 200}
+              dataKey={(data: ExchangeRate) => Number(data.exchangeRate)}
               hide={false}
               axisLine={false}
               tickLine={false}
@@ -118,7 +121,7 @@ function Chart() {
             />
             <Area
               type="monotone"
-              dataKey="rate"
+              dataKey="exchangeRate"
               stroke="#10b981"
               strokeWidth={3}
               fillOpacity={1}

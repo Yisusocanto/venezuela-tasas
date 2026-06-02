@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import certifi
 from app.core.config import settings
-from app.schemas.rate_schema import RateSchemaBase
+from app.schemas.schemas import BCVRate
 
 
 def _get_verify():
@@ -12,18 +12,18 @@ def _get_verify():
 class BcvRates:
 
     @classmethod
-    def get_bcv_rates(cls) -> list[RateSchemaBase] | None:
+    def get_bcv_rates(cls) -> list[BCVRate] | None:
         try:
             response = requests.get(settings.BCV_URL, verify=_get_verify(), timeout=30)
             if response.status_code == 200:
                 html = response.text
                 soup = BeautifulSoup(html, "html.parser")
 
-                rates: list[RateSchemaBase] = [
-                    RateSchemaBase(**cls.get_rate_currency(soup, "dolar")),
-                    RateSchemaBase(**cls.get_rate_currency(soup, "euro")),
-                    RateSchemaBase(**cls.get_rate_currency(soup, "lira")),
-                    RateSchemaBase(**cls.get_rate_currency(soup, "rublo")),
+                rates: list[BCVRate] = [
+                    BCVRate(**cls.get_rate_currency(soup, "dolar")),
+                    BCVRate(**cls.get_rate_currency(soup, "euro")),
+                    BCVRate(**cls.get_rate_currency(soup, "lira")),
+                    BCVRate(**cls.get_rate_currency(soup, "rublo")),
                 ]
                 return rates
             return None
@@ -42,7 +42,6 @@ class BcvRates:
         )
         currency_rate_float = round(float(currency_rate.strip()), 2)
         return {
-            "name": currency_name,
-            "rate": currency_rate_float,
-            "currency_code": currency_code,
+            "currency_name": currency_name,
+            "rate": str(currency_rate_float),
         }
