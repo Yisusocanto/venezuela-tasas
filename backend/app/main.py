@@ -11,22 +11,39 @@ from app.api.v1.v1_routes import v1_routes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Initializing app...")
+    print("Initializing app lifespan...")
 
-    rate_scraping()
+    # Start scraping in the background so we don't block port binding
+    # and cause Render to time out.
+    def run_initial_scraping():
+        try:
+            print("Performing initial rate scraping in background...")
+            rate_scraping()
+            print("Initial rate scraping completed successfully.")
+        except Exception as e:
+            print(f"Error during initial rate scraping: {e}")
 
-    loop = asyncio.get_running_loop()
-    scheduler = AsyncIOScheduler(loop=loop)
-    scheduler.add_job(rate_scraping, "cron", hour=12, minute=5)
-    scheduler.start()
+    # Use to_thread for the synchronous rate_scraping function
+    asyncio.create_task(asyncio.to_thread(run_initial_scraping))
 
-    print("cron job initialized.")
+    try:
+        loop = asyncio.get_running_loop()
+        scheduler = AsyncIOScheduler(loop=loop)
+        scheduler.add_job(rate_scraping, "cron", hour=12, minute=5)
+        scheduler.start()
+        print("Cron job scheduler started.")
+    except Exception as e:
+        print(f"Error starting scheduler: {e}")
 
     yield
 
-    scheduler.shutdown(wait=False)
+    try:
+        scheduler.shutdown(wait=False)
+        print("Scheduler shut down.")
+    except Exception as e:
+        print(f"Error shutting down scheduler: {e}")
 
-    print("Closing app...")
+    print("Closing app lifespan...")
 
 
 def create_app():

@@ -35,12 +35,24 @@ class BcvRates:
     @classmethod
     def get_rate_currency(cls, soup, currency_name: str):
         currency_div = soup.find(id=currency_name)
-        currency_rate = currency_div.find(class_="centrado").find("strong").text
+        if not currency_div:
+            raise ValueError(f"Could not find div for currency: {currency_name}")
+            
+        centrado_div = currency_div.find(class_="centrado")
+        if not centrado_div or not centrado_div.find("strong"):
+            raise ValueError(f"Could not find rate text for currency: {currency_name}")
+
+        currency_rate = centrado_div.find("strong").text
         currency_rate = currency_rate.replace(",", ".")
-        currency_code = (
-            currency_div.find(class_="col-sm-6 col-xs-6").find("span").text.strip()
-        )
-        currency_rate_float = round(float(currency_rate.strip()), 2)
+        
+        # We don't strictly need currency_code for BCVRate schema but we can log it if needed
+        # currency_code_span = currency_div.find(class_="col-sm-6 col-xs-6")
+        
+        try:
+            currency_rate_float = round(float(currency_rate.strip()), 2)
+        except ValueError:
+            raise ValueError(f"Could not parse rate '{currency_rate}' as float for {currency_name}")
+
         return {
             "currency_name": currency_name,
             "rate": str(currency_rate_float),

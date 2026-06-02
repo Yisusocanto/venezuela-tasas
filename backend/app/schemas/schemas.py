@@ -20,10 +20,10 @@ class CurrencyWithExchangeRates(CurrencyBase):
 
 
 class AllExchangeRatesResponse(BaseModel):
-    dolar: ExchangeRateWithCurrency
-    euro: ExchangeRateWithCurrency
-    lira: ExchangeRateWithCurrency
-    rublo: ExchangeRateWithCurrency
+    dolar: ExchangeRateWithCurrency | None = None
+    euro: ExchangeRateWithCurrency | None = None
+    lira: ExchangeRateWithCurrency | None = None
+    rublo: ExchangeRateWithCurrency | None = None
 
 
 class ExchangeRateResponse(BaseModel):

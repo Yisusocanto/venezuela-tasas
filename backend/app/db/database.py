@@ -10,6 +10,8 @@ if database_url.startswith("postgres://"):
 elif database_url.startswith("postgresql+asyncpg://"):
     database_url = database_url.replace("postgresql+asyncpg://", "postgresql://", 1)
 
+print(f"Using database URL: {database_url.split('@')[-1]}") # Debug only host/db
+
 connect_args = {}
 
 if not settings.DEBUG:

@@ -15,7 +15,16 @@ class ExchangeRateRepository:
         statement = select(Currency).where(Currency.name == currency_name)
         currency = self.db.exec(statement).first()
         if not currency:
-            raise Exception("Currency does not exist.")
+            # Auto-create currency if it doesn't exist
+            codes = {"dolar": "USD", "euro": "EUR", "lira": "TRY", "rublo": "RUB"}
+            names = {"dolar": "Dólar", "euro": "Euro", "lira": "Lira Turca", "rublo": "Rublo"}
+            currency = Currency(
+                name=currency_name, 
+                code=codes.get(currency_name, currency_name.upper()),
+            )
+            self.db.add(currency)
+            self.db.commit()
+            self.db.refresh(currency)
 
         new_rate = ExchangeRate(exchange_rate=exchange_rate, currency_id=currency.id)
         self.db.add(new_rate)
