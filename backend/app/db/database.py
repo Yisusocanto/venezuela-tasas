@@ -1,9 +1,14 @@
 from sqlmodel import create_engine, Session
-
 from app.core.config import settings
 
 # Import all models here for Alembic to discover them
 from app.models import ExchangeRate, Currency
+
+database_url = settings.DATABASE_URL
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+elif database_url.startswith("postgresql+asyncpg://"):
+    database_url = database_url.replace("postgresql+asyncpg://", "postgresql://", 1)
 
 connect_args = {}
 
@@ -12,7 +17,7 @@ if not settings.DEBUG:
     connect_args["sslmode"] = "require"
 
 engine = create_engine(
-    settings.DATABASE_URL,
+    database_url,
     pool_pre_ping=True,
     pool_recycle=300,
     connect_args=connect_args,
